@@ -31,10 +31,9 @@ export default JobDetailCard;
 const styles = StyleSheet.create({
   container: {
     backgroundColor:GlobalStyles.colors.whiteSmoke,
-    paddingHorizontal:3,
+    paddingHorizontal:16,
     paddingVertical:6,
-    borderBottomLeftRadius:10,
-    borderBottomRightRadius:10,
+    
   },
   top: {
     flexDirection: 'row',
@@ -44,8 +43,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   txt: {
-    fontFamily: 'Poppins-Light',
-    fontSize: 12,
+    fontFamily: 'Medium',
+    fontSize: 14,
     color: GlobalStyles.colors.txtColor,
     marginEnd:5
   },

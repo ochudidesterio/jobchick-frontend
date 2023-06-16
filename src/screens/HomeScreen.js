@@ -138,18 +138,11 @@ const HomeScreen = ({navigation}) => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      
       <View style={styles.stackContainer}>
         {nextJob && (
           <View style={styles.nextCard}>
             <Animated.View style={[styles.animatedCard, nextCardStyle]}>
-              {isDataLoaded && (
-                <JobCard
-                  title="Software Engineer"
-                  description="Test Desription"
-                  data={nextJob}
-                />
-              )}
+              {isDataLoaded && <JobCard data={nextJob} />}
             </Animated.View>
           </View>
         )}
@@ -168,11 +161,7 @@ const HomeScreen = ({navigation}) => {
                     style={[styles.like, {right: 10}, nopeStyle]}
                     resizeMode="contain"
                   />
-                  <JobCard
-                    title="Software Engineer"
-                    description="Test Desription"
-                    data={currentJob}
-                  />
+                  <JobCard data={currentJob} />
                 </>
               )}
             </Animated.View>
@@ -180,37 +169,37 @@ const HomeScreen = ({navigation}) => {
         )}
       </View>
       <View style={styles.icons}>
-      <TouchableOpacity style={[styles.button,{backgroundColor:GlobalStyles.colors.orange}]}>
-        <View style={styles.holder}>
-          <Font
-            name="mail-reply"
-            size={30}
-            color={GlobalStyles.colors.white}
-          />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button,{backgroundColor:GlobalStyles.colors.green}]}>
-        <View style={[styles.holder,{width:45,height:45}]}>
-          <Ent name="cross" size={40} color={GlobalStyles.colors.white} />
-          </View>
-        </TouchableOpacity>
-        
-        
-        <TouchableOpacity style={[styles.button,{backgroundColor:GlobalStyles.colors.red}]}>
-        <View style={[styles.holder,{width:45,height:45}]}>
-          <Icon
-            name="heart"
-            size={40}
-            color={GlobalStyles.colors.white}
-          />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            {backgroundColor: GlobalStyles.colors.orange},
+          ]}>
           <View style={styles.holder}>
-          <Ent name="home" size={30} color={GlobalStyles.colors.green} />
+            <Font
+              name="mail-reply"
+              size={25}
+              color={GlobalStyles.colors.white}
+            />
           </View>
         </TouchableOpacity>
-        
+        <TouchableOpacity
+          style={[styles.button, {backgroundColor: GlobalStyles.colors.green}]}>
+          <View style={[styles.holder, {width: 35, height: 35}]}>
+            <Ent name="cross" size={30} color={GlobalStyles.colors.white} />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, {backgroundColor: GlobalStyles.colors.red}]}>
+          <View style={[styles.holder, {width: 35, height: 35}]}>
+            <Icon name="heart" size={30} color={GlobalStyles.colors.white} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button,{backgroundColor: GlobalStyles.colors.colorPrimaryLight}]}>
+          <View style={styles.holder}>
+            <Icon name="chatbubble-ellipses" size={25} color={GlobalStyles.colors.white} />
+          </View>
+        </TouchableOpacity>
       </View>
     </GestureHandlerRootView>
   );
@@ -221,6 +210,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: GlobalStyles.colors.white,
   },
   stackContainer: {
     flex: 1,
@@ -244,12 +234,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     ...StyleSheet.absoluteFillObject,
   },
-  text: {
-    marginStart: 20,
-    padding: 20,
-    fontSize: 24,
-    color: GlobalStyles.colors.colorPrimaryDark,
-  },
+
   like: {
     width: 100,
     height: 100,
@@ -258,27 +243,27 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   icons: {
-    justifyContent: "space-around",
+    justifyContent: 'space-around',
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    padding: 10,
+    paddingHorizontal:16,
+    paddingBottom: 16,
   },
   button: {
     backgroundColor: GlobalStyles.colors.white,
     borderRadius: 50,
     padding: 7,
     elevation: 10,
-
   },
-  holder:{
-    width:35,
-    height:35,
-    justifyContent:'center',
-    alignItems:'center'
+  holder: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  tap:{
-    width:'100%',
-    height:'100%'
-  }
+  tap: {
+    width: '100%',
+    height: '100%',
+  },
 });

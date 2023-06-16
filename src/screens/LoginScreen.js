@@ -5,7 +5,7 @@ import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
 import Animated, {SlideInDown} from 'react-native-reanimated';
 import {Image, Text} from 'react-native-animatable';
-import api, { setAuthToken } from '../api/api';
+import api, {setAuthToken} from '../api/api';
 import {useDispatch} from 'react-redux';
 import {loginFailure, loginSuccess} from '../store/slices/authSlice';
 import {useNavigation} from '@react-navigation/native';
@@ -17,6 +17,9 @@ const LoginScreen = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [emailError, setEmailError] = useState('');
 
   const user = {
     email: '',
@@ -24,25 +27,41 @@ const LoginScreen = () => {
   };
 
   const handleLogin = async () => {
-    user.email = email;
-    user.password = password;
+    setPasswordError('');
+    setEmailError('');
     try {
-      const loginResponse = await api.post('/auth/authenticate', user);
-      console.log(loginResponse.data.token)
-      saveTokenToStorage(loginResponse.data.token)
-      if (loginResponse.data.message === 'Successful') {
-        dispatch(loginSuccess(loginResponse.data));
-        navigation.navigate('HomeTabs');
-      } else {
-        dispatch(loginFailure(loginResponse.data.message));
+      let isValid = true;
+
+      if (email.trim().length === 0) {
+        setEmailError('Email is required');
+        isValid = false;
       }
-      
-      
+      if (password.trim().length === 0) {
+        setPasswordError('Password is required');
+        isValid = false;
+      }
+
+      if (isValid) {
+        user.email = email;
+        user.password = password;
+        const loginResponse = await api.post('/auth/authenticate', user);
+        if (loginResponse.data.message === 'Successful') {
+          saveTokenToStorage(loginResponse.data.token);
+          const loggedInUser = await api.get(`/user/${loginResponse.data.id}`);
+          if (loggedInUser.data.message == 'Successful') {
+            dispatch(loginSuccess(loggedInUser.data));
+            navigation.navigate('HomeTabs');
+          }
+        } else {
+          dispatch(loginFailure(loginResponse.data.message));
+          setAuthError(loginResponse.data.message)
+        }
+      }
     } catch (error) {
       console.log(error);
     }
   };
-  const saveTokenToStorage = async (token) => {
+  const saveTokenToStorage = async token => {
     try {
       await AsyncStorage.setItem('token', token);
       console.log('Token saved to AsyncStorage:', token);
@@ -51,27 +70,38 @@ const LoginScreen = () => {
     }
   };
   const handleSignUp = () => {
-    navigation.navigate("authStack",{screen:'Register'});
+    navigation.navigate('authStack', {screen: 'Register'});
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.logoConatiner} >  
-          <Image style={styles.logo} resizeMode='contain' source={require('../images/logo.png')} />
+        <View style={styles.logoConatiner}>
+          <Image
+            style={styles.logo}
+            resizeMode="contain"
+            source={require('../images/logo.png')}
+          />
         </View>
         <Text style={styles.text}>Login</Text>
       </View>
       <Animated.View
         entering={SlideInDown.duration(1000)}
         style={styles.footer}>
+          {authError ? (
+            <Text style={styles.errorText}>{authError}</Text>
+          ) : null}
         <CustomInput
           placeholder="Email"
           icon="mail"
           value={email}
+          keyboard="email-address"
           onChangeText={setEmail}
           secureTextEntry={false}
         />
+        {emailError ? (
+            <Text style={styles.errorText}>{emailError}</Text>
+          ) : null}
         <CustomInput
           placeholder="Password"
           icon="lock-closed"
@@ -79,6 +109,9 @@ const LoginScreen = () => {
           onChangeText={setPassword}
           secureTextEntry={true}
         />
+        {passwordError ? (
+            <Text style={styles.errorText}>{passwordError}</Text>
+          ) : null}
 
         <CustomButton title="Login" onPress={handleLogin} />
         <View style={styles.signUpContainer}>
@@ -112,19 +145,20 @@ const styles = StyleSheet.create({
     paddingVertical: 50,
   },
   logoConatiner: {
-    height:100,
-    width:200,
-    marginTop:30,
+    height: 100,
+    width: 200,
+    marginTop: 30,
   },
-  logo:{
-    flex:1,
+  logo: {
+    flex: 1,
     width: '100%',
     height: '100%',
   },
-  text:{
-    fontSize:16,
-    fontWeight:'bold',
-    paddingBottom:20,
+  text: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    paddingBottom: 20,
+    color: GlobalStyles.colors.white,
   },
   forgot: {
     color: GlobalStyles.colors.forgot,
@@ -134,6 +168,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 5,
     marginTop: 20,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 1,
+    fontSize: 10,
+    fontFamily:"Medium"
   },
 });
 

@@ -11,9 +11,9 @@ const ParagraghView = ({paragraph,onPress}) => {
   return (
     <View>
       <Text style={styles.description}>
-        {`${paragraph.substring(0, 280)}...`}
+        {`${paragraph.substring(0, 250)}...`}
       </Text>
-      {paragraph.length > 280 && (
+      {paragraph.length > 250 && (
         <View style={styles.chevron}>
           <TouchableOpacity onPress={onPress}>
             <Icon name={'chevron-down'} size={35} color="black" />
@@ -28,10 +28,11 @@ export default ParagraghView;
 
 const styles = StyleSheet.create({
   description: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Bold',
+    fontSize: 15,
+    fontFamily: 'SemiBold',
     color: GlobalStyles.colors.txtColor,
     textAlign: 'justify',
+    paddingHorizontal:16,
   },
   chevron: {
     justifyContent: 'center',

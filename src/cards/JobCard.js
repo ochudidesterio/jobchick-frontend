@@ -4,32 +4,33 @@ import {GlobalStyles} from '../colors';
 import ParagraghView from '../components/ParagraghView';
 import JobDetailCard from './JobDetailCard';
 import { useNavigation } from '@react-navigation/native';
+import calculateTimeElapsed from '../util/timeUtils';
 
 const JobCard = ({data}) => {
   const navigation = useNavigation()
-  const calculateTimeElapsed = timestamp => {
-    const currentTime = new Date();
-    const pastTime = new Date(timestamp);
+  // const calculateTimeElapsed = timestamp => {
+  //   const currentTime = new Date();
+  //   const pastTime = new Date(timestamp);
 
-    // Calculate the time difference in milliseconds
-    const timeDifference = currentTime - pastTime;
+    
+  //   const timeDifference = currentTime - pastTime;
 
-    // Calculate the time difference in seconds, minutes, hours, and days
-    const seconds = Math.floor(timeDifference / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
+    
+  //   const seconds = Math.floor(timeDifference / 1000);
+  //   const minutes = Math.floor(seconds / 60);
+  //   const hours = Math.floor(minutes / 60);
+  //   const days = Math.floor(hours / 24);
 
-    if (days > 0) {
-      return `${days} day${days > 1 ? 's' : ''} ago`;
-    } else if (hours > 0) {
-      return `${hours} hr${hours > 1 ? 's' : ''} ago`;
-    } else if (minutes > 0) {
-      return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
-    } else {
-      return `${seconds} sec${seconds !== 1 ? 's' : ''} ago`;
-    }
-  };
+  //   if (days > 0) {
+  //     return `${days} day${days > 1 ? 's' : ''} ago`;
+  //   } else if (hours > 0) {
+  //     return `${hours} hr${hours > 1 ? 's' : ''} ago`;
+  //   } else if (minutes > 0) {
+  //     return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
+  //   } else {
+  //     return `${seconds} sec${seconds !== 1 ? 's' : ''} ago`;
+  //   }
+  // };
 
   const showMoreDetails = () => {
     navigation.navigate("Details",{data})
@@ -65,26 +66,28 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     borderRadius: 15,
-    padding: 16,
     marginBottom: 16,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: {width: 0, height: 2},
-    elevation: 2,
+    elevation: 6,
     width: '100%',
     height: '90%',
+    paddingTop:16,
   },
   title: {
-    fontSize: 18,
-    fontFamily: 'Poppins-ExtraBold',
+    fontSize: 20,
+    fontFamily: 'ExtraBold',
     marginBottom: 8,
     color: GlobalStyles.colors.txtColor,
+    paddingVertical:5
   },
   desc: {
     fontSize: 12,
     color: '#000',
-    fontFamily: 'Poppins-Light',
+    fontFamily: 'Bold',
     paddingVertical: 10,
+    paddingHorizontal:16,
     textAlign: 'right',
   },
 

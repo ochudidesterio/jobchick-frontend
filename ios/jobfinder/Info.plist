@@ -56,6 +56,12 @@
 		<string>Poppins-Light.ttf</string>
 		<string>Poppins-Bold.ttf</string>
 		<string>Poppins-ExtraBold.ttf</string>
+		<string>Bold.ttf</string>
+		<string>ExtraBold.ttf</string>
+		<string>Light.ttf</string>
+		<string>Medium.ttf</string>
+		<string>Regular.ttf</string>
+		<string>SemiBold.ttf</string>
 	</array>
 </dict>
 </plist>

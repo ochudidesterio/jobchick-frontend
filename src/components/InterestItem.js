@@ -22,6 +22,6 @@ const styles = StyleSheet.create({
     },
     name:{
         color:GlobalStyles.colors.txtColor,
-        fontFamily:'Poppins-Light'
+        fontFamily:'Light'
     }
 })

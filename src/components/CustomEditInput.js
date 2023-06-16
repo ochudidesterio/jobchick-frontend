@@ -3,7 +3,7 @@ import React from 'react';
 import {GlobalStyles} from '../colors';
 import {Text} from 'react-native-animatable';
 
-const CustomEditInput = ({placeholder, value, onChangeText}) => {
+const CustomEditInput = ({placeholder, value, onChangeText,keyboard}) => {
   return (
     <View style={styles.container}>
         <Text style={styles.text}>{placeholder}</Text>
@@ -13,6 +13,7 @@ const CustomEditInput = ({placeholder, value, onChangeText}) => {
           style={styles.input}
           value={value}
           onChangeText={onChangeText}
+          keyboardType ={keyboard}
           
           
         />
@@ -32,8 +33,9 @@ const styles = StyleSheet.create({
   text:{
     color:GlobalStyles.colors.txtColor,
     textAlign:"right",
-    fontFamily:"Poppins-Bold",
-    fontSize:12,
+    fontFamily:"Bold",
+    fontSize:16,
+    marginBottom:5,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -49,5 +51,6 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colors.txtColor,
     padding: 5,
     fontSize: 16,
+    fontFamily:"Medium"
   },
 });

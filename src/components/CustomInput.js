@@ -3,7 +3,7 @@ import { View, TextInput, StyleSheet,TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { GlobalStyles } from '../colors';
 
-const CustomInput = ({ placeholder, icon, value, onChangeText, secureTextEntry }) => {
+const CustomInput = ({ placeholder, icon, value, onChangeText, secureTextEntry,keyboard }) => {
     const [isPasswordVisible, setPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -24,6 +24,7 @@ const CustomInput = ({ placeholder, icon, value, onChangeText, secureTextEntry }
         style={styles.input}
         placeholder={placeholder}
         value={value}
+        keyboardType ={keyboard}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry && !isPasswordVisible}
         placeholderTextColor={GlobalStyles.colors.hint}

@@ -1,5 +1,5 @@
-import {ScrollView, StyleSheet, View} from 'react-native';
-import React, {useState} from 'react';
+import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import CircularImageView from '../components/CircularImageView';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {GlobalStyles} from '../colors';
@@ -14,7 +14,9 @@ import {updateUser} from '../store/slices/authSlice';
 
 const EditProfileScreen = ({navigation}) => {
   const user = useSelector(state => state.auth.user);
+  console.log(user);
   const dispatch = useDispatch();
+  const [uri, setUri] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [profileImage, setProfileImage] = useState(user.profileImage);
   const [firstName, setFirstName] = useState(user.firstName);
@@ -23,6 +25,8 @@ const EditProfileScreen = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber);
   const [proffession, setProffession] = useState(user.proffession);
   const [authUsername, setAuthUserName] = useState(user.authUsername);
+  const [age, setAge] = useState(user.age);
+  const [isLoading, setIsLoading] = useState(false);
   const userData = {
     firstName: '',
     lastName: '',
@@ -31,6 +35,7 @@ const EditProfileScreen = ({navigation}) => {
     gender: '',
     authUsername: '',
     profileImage: '',
+    age,
   };
   function generateRandomNumber() {
     return Math.floor(Math.random() * 1000000);
@@ -74,6 +79,7 @@ const EditProfileScreen = ({navigation}) => {
 
   const handleUpload = async () => {
     try {
+      
       const randomNumber = generateRandomNumber();
 
       const response = await fetch(imageUrl);
@@ -82,23 +88,30 @@ const EditProfileScreen = ({navigation}) => {
         storage,
         `images/${randomNumber}/${user.firstName}`,
       );
-      uploadBytes(reference, blob).then(snapshot => {
-        getDownloadURL(snapshot.ref).then(url => {
-          console.log(url);
-          if (url) {
-            setProfileImage(url);
-            setImageUrl(null);
-          }
-        });
-      });
+
+      const snapshot = await uploadBytes(reference, blob);
+      const url = await getDownloadURL(snapshot.ref);
+
+      if (url) {
+        // setProfileImage(url);
+        setImageUrl(null);
+        setUri(url);
+      }
 
       console.log('Upload successful');
     } catch (error) {
       console.log('Error uploading image:', error);
+    }finally{
+
     }
   };
+  useEffect(() => {
+    setProfileImage(uri);
+    console.log('EffectUri', profileImage);
+  }, [uri]);
 
   const handleSubmit = async () => {
+
     userData.authUsername = authUsername;
     userData.firstName = firstName;
     userData.lastName = lastName;
@@ -106,56 +119,55 @@ const EditProfileScreen = ({navigation}) => {
     userData.phoneNumber = phoneNumber;
     userData.proffession = proffession;
     userData.profileImage = profileImage;
+    userData.age = age;
     try {
+      setIsLoading(true);
       const res = await api.put(`/user/update/${user.id}`, userData);
-      console.log(userData);
-      console.log(res.data);
-      dispatch(updateUser(res.data));
-      navigation.navigate("Profile")
+
+      if (res.data.message === 'Successful') {
+        dispatch(updateUser(res.data));
+        navigation.navigate('Profile');
+      }
     } catch (error) {
       console.log('Update Error', error);
+    }finally{
+      setIsLoading(false)
     }
   };
   return (
     <ScrollView style={styles.container}>
       <View style={styles.holder}>
         <View style={styles.imageContainer}>
-          {profileImage !== null || profileImage !== '' ? (
+          {
             <CircularImageView
               icon="camera"
               onPress={handleCameraPress}
-              imageSource={{uri: profileImage}}
+              imageSource={
+                profileImage !== null
+                  ? {uri: profileImage}
+                  : require('../images/person.jpg')
+              }
+              user={user}
             />
-          ) : (
-            <CircularImageView
-              icon="camera"
-              onPress={handleCameraPress}
-              imageSource={{
-                uri:
-                  user.profileImage !== null || user.profileImage !== ''
-                    ? user.profileImage
-                    : require('../images/person.jpg'),
-              }}
-            />
-          )}
+          }
         </View>
       </View>
       <View style={styles.detailsContainer}>
         <View style={styles.editContainer}>
           <CustomEditInput
-            placeholder="first name"
-            value={firstName}
-            onChangeText={setFirstName}
-          />
-          <CustomEditInput
-            placeholder="last name"
+            placeholder="שם משפחה"
             value={lastName}
             onChangeText={setLastName}
+          />
+          <CustomEditInput
+            placeholder="שם פרטי"
+            value={firstName}
+            onChangeText={setFirstName}
           />
         </View>
         <View style={styles.editContainer}>
           <CustomEditInput
-            placeholder="username"
+            placeholder="Username"
             value={authUsername}
             onChangeText={setAuthUserName}
           />
@@ -167,9 +179,16 @@ const EditProfileScreen = ({navigation}) => {
         </View>
         <View style={styles.editContainer}>
           <CustomEditInput
+            placeholder="Age"
+            value={age}
+            onChangeText={setAge}
+            keyboard="numeric"
+          />
+          <CustomEditInput
             placeholder="Phone Number"
             value={phoneNumber}
             onChangeText={setPhoneNumber}
+            keyboard="numeric"
           />
         </View>
         <View style={styles.editContainer}>
@@ -178,6 +197,13 @@ const EditProfileScreen = ({navigation}) => {
             value={proffession}
             onChangeText={setProffession}
           />
+        </View>
+        <View>
+        {isLoading && (
+          <View style={styles.activityIndicatorContainer}>
+            <ActivityIndicator size="large" color={GlobalStyles.colors.colorPrimaryLight} />
+          </View>
+        )}
         </View>
 
         <View style={styles.editContainer}>
@@ -193,6 +219,7 @@ export default EditProfileScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 3,
+    paddingBottom: 20,
   },
   holder: {
     height: 200,
@@ -205,13 +232,26 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     flex: 2,
+    marginTop: 20,
+    paddingBottom: 90,
   },
   editContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginHorizontal: 10,
+    marginHorizontal: 20,
   },
   text: {
     color: GlobalStyles.colors.txtColor,
+  },
+  activityIndicatorContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 9999,
   },
 });
