@@ -30,6 +30,7 @@ import Nope from '../images/nope.png';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Font from 'react-native-vector-icons/FontAwesome';
 import Ent from 'react-native-vector-icons/Entypo';
+import { likeJob, setLikeJob } from '../store/slices/authSlice';
 
 const HomeScreen = ({navigation}) => {
   const {width: screenWidth} = useWindowDimensions();
@@ -136,8 +137,20 @@ const HomeScreen = ({navigation}) => {
     }
   }, [currentIndex, translateX]);
 
-  const likeJob = ()=>{
-    console.log("LikedJob",currentJob)
+  const likeJobData ={
+    jobId:'',
+    userId:'',
+  }
+  const like =async ()=>{
+    dispatch(likeJob(currentJob))
+    try {
+      likeJobData.jobId = currentJob.id;
+      likeJobData.userId = user.id;
+       await api.post("/job/like",likeJobData)
+      
+    } catch (error) {
+      console.log("LikeJobError",error)
+    }
   }
 
   return (
@@ -193,7 +206,7 @@ const HomeScreen = ({navigation}) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={likeJob}
+        <TouchableOpacity onPress={like}
           style={[styles.button, {backgroundColor: GlobalStyles.colors.red}]}>
           <View style={[styles.holder, {width: 35, height: 35}]}>
             <Icon name="heart" size={30} color={GlobalStyles.colors.white} />

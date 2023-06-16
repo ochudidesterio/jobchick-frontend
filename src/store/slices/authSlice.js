@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 
 const authSlice = createSlice({
   name: 'auth',
@@ -8,6 +8,7 @@ const authSlice = createSlice({
     token: null,
     loading: false,
     error: null,
+    likeJob: [],
   },
   reducers: {
     loginStart(state) {
@@ -25,8 +26,8 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = payload;
     },
-    updateUser(state,{payload}){
-      state.user =payload
+    updateUser(state, {payload}) {
+      state.user = payload;
     },
     logout(state) {
       state.loggedIn = false;
@@ -35,10 +36,34 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
+    setLikeJob(state, {payload}) {
+      state.likeJob = payload;
+    },
+    likeJob(state, {payload}) {
+      const index = state.likeJob.findIndex(job => job.id === payload.id);
+      if (index === -1) {
+        // Add the job to likeJob array if it doesn't exist
+        state.likeJob.push(payload);
+      } else {
+        // Replace the job if it already exists
+        state.likeJob[index] = payload;
+      }
+    },
+    unlikeJob(state, {payload}) {
+      state.likeJob = state.likeJob.filter(job => job.id !== payload.id);
+    },
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout,updateUser } = authSlice.actions;
+export const {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  logout,
+  updateUser,
+  likeJob,
+  unlikeJob,
+  setLikeJob,
+} = authSlice.actions;
 
 export default authSlice.reducer;
-
