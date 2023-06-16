@@ -136,6 +136,10 @@ const HomeScreen = ({navigation}) => {
     }
   }, [currentIndex, translateX]);
 
+  const likeJob = ()=>{
+    console.log("LikedJob",currentJob)
+  }
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.stackContainer}>
@@ -189,7 +193,7 @@ const HomeScreen = ({navigation}) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        <TouchableOpacity onPress={likeJob}
           style={[styles.button, {backgroundColor: GlobalStyles.colors.red}]}>
           <View style={[styles.holder, {width: 35, height: 35}]}>
             <Icon name="heart" size={30} color={GlobalStyles.colors.white} />
