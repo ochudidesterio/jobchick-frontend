@@ -11,9 +11,9 @@ const ParagraghView = ({paragraph,onPress}) => {
   return (
     <View>
       <Text style={styles.description}>
-        {`${paragraph.substring(0, 250)}...`}
+        {`${paragraph.substring(0, 220)}...`}
       </Text>
-      {paragraph.length > 250 && (
+      {paragraph.length > 220 && (
         <View style={styles.chevron}>
           <TouchableOpacity onPress={onPress}>
             <Icon name={'chevron-down'} size={35} color="black" />

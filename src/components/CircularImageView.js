@@ -9,7 +9,7 @@ const CircularImageView = ({imageSource, onPress, icon, user}) => {
   let percent;
 
   const getProgressPercentage = () => {
-    const {firstName, lastName, email,gender, phoneNumber, authUsername,age,proffession} = user;
+    const {firstName, lastName, email,gender,profileImage, phoneNumber, authUsername,age,proffession} = user;
     const progressProperties = [
       firstName,
       lastName,
@@ -18,7 +18,8 @@ const CircularImageView = ({imageSource, onPress, icon, user}) => {
       authUsername,
       age,
       proffession,
-      gender
+      gender,
+      profileImage
     ];
     const nonEmptyProperties = progressProperties.filter(prop => prop);
 
@@ -46,18 +47,25 @@ const CircularImageView = ({imageSource, onPress, icon, user}) => {
           size={160}
           fill={getProgressPercentage()}
           thickness={5}
-          width={6}
+          width={4}
           tintTransparency={true}
+          rotation={180}
+          
           tintColor={GlobalStyles.colors.colorPrimaryDark}>
           {() => (
             
-              <View style={styles.imageContainer}>
+              
+                <View style={styles.imageContainer}>
                 <Image
                 source={imageSource}
-                style={styles.profile}
+                style={[
+                  styles.profile,
+                ]}
                 resizeMode="cover"
               />
+<View style={styles.imageBorder} />
               </View>
+             
             
           )}
         </AnimatedCircularProgress>
@@ -87,19 +95,31 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   imageContainer:{
-    width:150,
-    height:150,
+    width:152,
+    height:152,
     borderRadius:150/2,
-    borderColor:GlobalStyles.colors.hint,
-    borderWidth:2,
     overflow: 'hidden',
+    elevation:5,
+    position:"relative"
    
+  },
+  imageBorder: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   profile: {
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
     flex: 1,
+    borderRadius: 100, 
+   
   },
   editButton: {
     position: 'absolute',

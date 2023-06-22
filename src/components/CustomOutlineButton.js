@@ -22,9 +22,9 @@ const styles = StyleSheet.create({
     width:"100%",
   },
   buttonText: {
-    color: GlobalStyles.colors.error500,
-    fontSize: 14,
-    fontFamily:"SemiBold"
+    color: GlobalStyles.colors.txtColor,
+    fontSize: 18,
+    fontFamily:"Bold"
   },
 });
 

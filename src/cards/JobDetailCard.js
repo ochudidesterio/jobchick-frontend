@@ -3,7 +3,7 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {GlobalStyles} from '../colors';
 
-const JobDetailCard = ({location, timePosted, salary,level}) => {
+const JobDetailCard = ({location, timePosted, salary,level,company}) => {
     
   return (
     <View style={styles.container}>
@@ -12,7 +12,7 @@ const JobDetailCard = ({location, timePosted, salary,level}) => {
           <Text style={styles.txt}>{location}</Text>
           <Icon name="location" size={15} color={GlobalStyles.colors.red} />
         </View>
-        <Text style={styles.txt}>Posted {timePosted}</Text>
+        <Text style={styles.txt}>{company}</Text>
       </View>
       <View style={styles.item}>
         <Text style={styles.txt}>{salary}</Text>
@@ -21,6 +21,9 @@ const JobDetailCard = ({location, timePosted, salary,level}) => {
       <View style={styles.item}>
         <Text style={styles.txt}>{level}</Text>
         <Icon name="briefcase" size={15} color={GlobalStyles.colors.txtColor} />
+      </View>
+      <View style={styles.item}>
+      <Text style={styles.txt}>Posted {timePosted}</Text>
       </View>
     </View>
   );

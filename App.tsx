@@ -37,7 +37,7 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="SplashScreen"
-        screenOptions={{headerShown: false}}>
+        screenOptions={{headerShown: false} }>
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         {loggedIn ? (
           <>

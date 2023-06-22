@@ -54,6 +54,7 @@ const JobCard = ({data}) => {
         salary={data.salary}
         location={data.region}
         timePosted={calculateTimeElapsed(data.timestamp)}
+        company={data.company.name}
       />
 
       <Text style={styles.desc}>Description</Text>

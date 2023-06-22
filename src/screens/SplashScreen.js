@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {View, Image, StyleSheet} from 'react-native';
-import Animated, {BounceIn, SlideInDown} from 'react-native-reanimated';
+import Animated, {BounceIn} from 'react-native-reanimated';
 import {GlobalStyles} from '../colors';
 import {useSelector} from 'react-redux';
 import { Text } from 'react-native-animatable';

@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 3,
     paddingBottom: 20,
+    backgroundColor:GlobalStyles.colors.white
   },
   holder: {
     height: 200,

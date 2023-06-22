@@ -15,9 +15,9 @@ const DetailsScreen = ({route}) => {
   useEffect(() => {
     fetchRoles(data.id);
   }, [data.id]);
-  useEffect(()=>{
-    fetchQualifications(data.id)
-  },[data.id])
+  useEffect(() => {
+    fetchQualifications(data.id);
+  }, [data.id]);
 
   const fetchRoles = async id => {
     try {
@@ -27,14 +27,14 @@ const DetailsScreen = ({route}) => {
       console.log('FetchRolesError', error);
     }
   };
-  const fetchQualifications =async (id)=>{
-    try{
-      const response = await api.get(`/job/qualifications/${id}`)
-      setQualifications(response.data)
-    }catch(error){
-      console.log("FetchQualificationError",error)
+  const fetchQualifications = async id => {
+    try {
+      const response = await api.get(`/job/qualifications/${id}`);
+      setQualifications(response.data);
+    } catch (error) {
+      console.log('FetchQualificationError', error);
     }
-  }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -42,18 +42,23 @@ const DetailsScreen = ({route}) => {
         <View style={styles.header}>
           <View style={styles.avatar}>
             <Image
-              source={require('../images/google.png')}
+              source={
+                data.company.logoUrl !== null
+                  ? {uri: data.company.logoUrl}
+                  : require('../images/google.png')
+              }
               style={styles.headAvatar}
               resizeMode="contain"
             />
           </View>
           <Text style={styles.title}>{data.title}</Text>
+          <Text style={styles.company}>({data.company.name})</Text>
           <Text style={styles.type}>
             {data.level} | {data.type} | {data.region}
           </Text>
           <Text style={styles.salary}>{data.salary} / Year</Text>
         </View>
-        
+
         <View style={styles.jdContainer}>
           <Text style={styles.time}>
             Posted {calculateTimeElapsed(data.timestamp)}
@@ -64,7 +69,7 @@ const DetailsScreen = ({route}) => {
         <JobRolesList roles={roles} />
         <QualificationList qualifications={qualifications} />
         <View style={styles.applyContainer}>
-        <CustomOutLineButton title="Procced to Application" />
+          <CustomOutLineButton title="Proceed to Application" />
         </View>
       </View>
     </ScrollView>
@@ -76,19 +81,20 @@ export default DetailsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-   
+    backgroundColor:GlobalStyles.colors.white
   },
   jobContainer: {
-    paddingHorizontal: 18,
-    paddingBottom:30,
+    paddingHorizontal: 26,
+    paddingBottom: 30,
   },
   avatar: {
-    width: 90,
-    height: 90,
-    borderRadius: 50,
+    width: "100%",
+    height: 130,
+    // borderRadius: 130 / 2,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: GlobalStyles.colors.cream,
+    overflow: 'hidden',
+    marginBottom:20
   },
   headAvatar: {
     width: '100%',
@@ -99,9 +105,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
   },
-  applyContainer:{
-    justifyContent:"center",
-    alignItems:"center"
+  applyContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   description: {
     color: GlobalStyles.colors.txtColor,
@@ -118,6 +124,10 @@ const styles = StyleSheet.create({
   type: {
     fontFamily: 'SemiBold',
     color: GlobalStyles.colors.txtColor,
+  },
+  company: {
+    fontFamily: 'SemiBold',
+    color: GlobalStyles.colors.colorPrimaryDark,
   },
   salary: {
     fontFamily: 'Medium',
