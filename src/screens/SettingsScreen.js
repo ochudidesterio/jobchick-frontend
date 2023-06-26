@@ -5,6 +5,7 @@ import {CommonActions} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {logout} from '../store/slices/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Translation } from '../util/WordsUtil';
 
 const SettingsScreen = ({navigation}) => {
   const dispatch = useDispatch();
@@ -20,7 +21,7 @@ const SettingsScreen = ({navigation}) => {
   };
   return (
     <View style={styles.container}>
-      <CustomButton title="Logout" onPress={handleLogout} />
+      <CustomButton title={Translation.word.logout} onPress={handleLogout} />
     </View>
   );
 };

@@ -11,6 +11,7 @@ import CustomEditInput from '../components/CustomEditInput';
 import api from '../api/api';
 import {useDispatch} from 'react-redux';
 import {updateUser} from '../store/slices/authSlice';
+import { Translation } from '../util/WordsUtil';
 
 const EditProfileScreen = ({navigation}) => {
   const user = useSelector(state => state.auth.user);
@@ -155,37 +156,37 @@ const EditProfileScreen = ({navigation}) => {
       <View style={styles.detailsContainer}>
         <View style={styles.editContainer}>
           <CustomEditInput
-            placeholder="שם משפחה"
+            placeholder={Translation.word.lastName}
             value={lastName}
             onChangeText={setLastName}
           />
           <CustomEditInput
-            placeholder="שם פרטי"
+            placeholder={Translation.word.firstName}
             value={firstName}
             onChangeText={setFirstName}
           />
         </View>
         <View style={styles.editContainer}>
           <CustomEditInput
-            placeholder="Username"
+            placeholder={Translation.word.username}
             value={authUsername}
             onChangeText={setAuthUserName}
           />
           <CustomEditInput
-            placeholder="Gender"
+            placeholder={Translation.word.gender}
             value={gender}
             onChangeText={setGender}
           />
         </View>
         <View style={styles.editContainer}>
           <CustomEditInput
-            placeholder="Age"
+            placeholder={Translation.word.age}
             value={age}
             onChangeText={setAge}
             keyboard="numeric"
           />
           <CustomEditInput
-            placeholder="Phone Number"
+            placeholder={Translation.word.phonenumber}
             value={phoneNumber}
             onChangeText={setPhoneNumber}
             keyboard="numeric"
@@ -193,7 +194,7 @@ const EditProfileScreen = ({navigation}) => {
         </View>
         <View style={styles.editContainer}>
           <CustomEditInput
-            placeholder="Proffession"
+            placeholder={Translation.word.proffesion}
             value={proffession}
             onChangeText={setProffession}
           />
@@ -207,7 +208,7 @@ const EditProfileScreen = ({navigation}) => {
         </View>
 
         <View style={styles.editContainer}>
-          <CustomButton title="Update Profile" onPress={handleSubmit} />
+          <CustomButton title={Translation.word.updateProfile} onPress={handleSubmit} />
         </View>
       </View>
     </ScrollView>

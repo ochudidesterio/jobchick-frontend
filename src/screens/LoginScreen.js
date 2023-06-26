@@ -10,6 +10,7 @@ import {useDispatch} from 'react-redux';
 import {loginFailure, loginSuccess} from '../store/slices/authSlice';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Translation } from '../util/WordsUtil';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -33,11 +34,11 @@ const LoginScreen = () => {
       let isValid = true;
 
       if (email.trim().length === 0) {
-        setEmailError('Email is required');
+        setEmailError(Translation.word.loginEmailError);
         isValid = false;
       }
       if (password.trim().length === 0) {
-        setPasswordError('Password is required');
+        setPasswordError(Translation.word.loginPassError);
         isValid = false;
       }
 
@@ -83,7 +84,7 @@ const LoginScreen = () => {
             source={require('../images/logo.png')}
           />
         </View>
-        <Text style={styles.text}>Login</Text>
+        <Text style={styles.text}>{Translation.word.login}</Text>
       </View>
       <Animated.View
         entering={SlideInDown.duration(1000)}
@@ -92,7 +93,7 @@ const LoginScreen = () => {
             <Text style={styles.errorText}>{authError}</Text>
           ) : null}
         <CustomInput
-          placeholder="Email"
+          placeholder={Translation.word.email}
           icon="mail"
           value={email}
           keyboard="email-address"
@@ -103,7 +104,7 @@ const LoginScreen = () => {
             <Text style={styles.errorText}>{emailError}</Text>
           ) : null}
         <CustomInput
-          placeholder="Password"
+          placeholder={Translation.word.password}
           icon="lock-closed"
           value={password}
           onChangeText={setPassword}
@@ -113,11 +114,11 @@ const LoginScreen = () => {
             <Text style={styles.errorText}>{passwordError}</Text>
           ) : null}
 
-        <CustomButton title="Login" onPress={handleLogin} />
+        <CustomButton title={Translation.word.login} onPress={handleLogin} />
         <View style={styles.signUpContainer}>
-          <Text style={styles.forgot}>Forgot Password?</Text>
+          <Text style={styles.forgot}>{Translation.word.forgotPassword}</Text>
           <Text onPress={handleSignUp} style={styles.forgot}>
-            Sign Up
+            {Translation.word.signUp}
           </Text>
         </View>
       </Animated.View>

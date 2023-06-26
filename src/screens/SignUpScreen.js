@@ -6,8 +6,8 @@ import CustomInput from '../components/CustomInput';
 import Animated, {SlideInDown} from 'react-native-reanimated';
 import {Text, Image} from 'react-native-animatable';
 import {useNavigation} from '@react-navigation/native';
-import {async} from '@firebase/util';
 import api from '../api/api';
+import { Translation } from '../util/WordsUtil';
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState('');
@@ -43,22 +43,22 @@ const SignUpScreen = () => {
       let isValid = true;
 
       if (username.trim().length === 0) {
-        setUsernameError('Username is required');
+        setUsernameError(Translation.word.usernameError);
         isValid = false;
       }
       if (password.trim().length < 6) {
-        setPasswordError('Password must be at least 6 characters long.');
+        setPasswordError(Translation.word.passlenthError);
         isValid = false;
       }
       if (!isValidEmail(email)) {
-        setEmailError('Invalid email address.');
+        setEmailError(Translation.word.txtEmailError);
         isValid = false;
       }
       if (confirmpassword.trim().length === 0) {
-        setConfirmPasswordError('Please confirm your password.');
+        setConfirmPasswordError(Translation.word.txtConfirmpass);
         isValid = false;
       } else if (password !== confirmpassword) {
-        setConfirmPasswordError('Passwords do not match.');
+        setConfirmPasswordError(Translation.word.notmatch);
         isValid = false;
       }
 
@@ -93,7 +93,7 @@ const SignUpScreen = () => {
             source={require('../images/logo.png')}
           />
         </View>
-        <Text style={styles.text}>Create your account</Text>
+        <Text style={styles.text}>{Translation.word.createyouraccount}</Text>
       </View>
       <Animated.View
         entering={SlideInDown.duration(1000)}
@@ -103,7 +103,7 @@ const SignUpScreen = () => {
             <Text style={styles.errorText}>{authError}</Text>
           ) : null}
           <CustomInput
-            placeholder="Username"
+            placeholder={Translation.word.username}
             icon="person"
             value={username}
             onChangeText={setUsername}
@@ -114,7 +114,7 @@ const SignUpScreen = () => {
           ) : null}
 
           <CustomInput
-            placeholder="Email"
+            placeholder={Translation.word.email}
             icon="mail"
             keyboard="email-address"
             value={email}
@@ -126,7 +126,7 @@ const SignUpScreen = () => {
           ) : null}
 
           <CustomInput
-            placeholder="Password"
+            placeholder={Translation.word.password}
             icon="lock-closed"
             value={password}
             onChangeText={setPassword}
@@ -137,7 +137,7 @@ const SignUpScreen = () => {
           ) : null}
 
           <CustomInput
-            placeholder="confirm password"
+            placeholder={Translation.word.confirmPassword}
             icon="lock-closed"
             value={confirmpassword}
             onChangeText={setConfirmPassword}
@@ -147,11 +147,11 @@ const SignUpScreen = () => {
             <Text style={styles.errorText}>{confirmpasswordError}</Text>
           ) : null}
 
-          <CustomButton title="Register" onPress={handleRegister} />
+          <CustomButton title={Translation.word.register} onPress={handleRegister} />
           <View style={styles.signUpContainer}>
-            <Text style={styles.forgot}>Privacy Policy</Text>
+            <Text style={styles.forgot}>{Translation.word.privacyPolicy}</Text>
             <Text onPress={handleSignIn} style={styles.forgot}>
-              Sign In
+              {Translation.word.signIn}
             </Text>
           </View>
         </ScrollView>

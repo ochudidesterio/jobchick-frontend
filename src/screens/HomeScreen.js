@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   icons: {
     justifyContent: 'space-around',
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     width: '100%',
     paddingHorizontal:16,

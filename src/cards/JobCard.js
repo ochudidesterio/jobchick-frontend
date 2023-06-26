@@ -5,6 +5,7 @@ import ParagraghView from '../components/ParagraghView';
 import JobDetailCard from './JobDetailCard';
 import { useNavigation } from '@react-navigation/native';
 import calculateTimeElapsed from '../util/timeUtils';
+import { Translation } from '../util/WordsUtil';
 
 const JobCard = ({data}) => {
   const navigation = useNavigation()
@@ -57,7 +58,7 @@ const JobCard = ({data}) => {
         company={data.company.name}
       />
 
-      <Text style={styles.desc}>Description</Text>
+      <Text style={styles.desc}>{Translation.word.description}</Text>
       <ParagraghView paragraph={data.description} onPress={showMoreDetails} />
     </View>
   );
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Bold',
     paddingVertical: 10,
     paddingHorizontal:16,
-    textAlign: 'right',
+    textAlign: 'left',
   },
 
   header: {

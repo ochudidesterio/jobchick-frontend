@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Font from 'react-native-vector-icons/Fontisto';
 import InterestItem from '../components/InterestItem';
 import UserImage from '../components/UserImage';
+import { Translation } from '../util/WordsUtil';
 
 const ProfileScreen = ({navigation}) => {
   const user = useSelector(state => state.auth.user);
@@ -34,7 +35,7 @@ const ProfileScreen = ({navigation}) => {
       </View>
       <View style={styles.details}>
         <View style={styles.nameContainer}>
-          <Text style={styles.nameLeft}>({user.age == null ? 0 : user.age}),</Text>
+          <Text style={styles.nameLeft}>,({user.age == null ? 0 : user.age})</Text>
           <Text style={styles.name}>
             {user.firstName === null || user.lastName === null
               ? user.authUsername
@@ -44,20 +45,22 @@ const ProfileScreen = ({navigation}) => {
         </View>
         <View style={styles.line} />
         <View style={styles.teleContainer}>
-          <Text style={styles.text}>Phone Number</Text>
           <View style={styles.iconContainer}>
             <Font name="phone" size={15} color={GlobalStyles.colors.white} />
           </View>
+          <Text style={styles.text}>{Translation.word.phonenumber}</Text>
+
         </View>
         <View style={styles.telephone}>
           <Text style={styles.txtItem}>{user.phoneNumber}</Text>
         </View>
         <View style={styles.line} />
         <View style={styles.teleContainer}>
-          <Text style={styles.text}>Email</Text>
           <View style={styles.iconContainer}>
             <Icon name="mail" size={15} color={GlobalStyles.colors.white} />
           </View>
+          <Text style={styles.text}>{Translation.word.email}</Text>
+
         </View>
         <View style={styles.telephone}>
           <Text style={styles.txtItem}>{user.email}</Text>
@@ -65,7 +68,6 @@ const ProfileScreen = ({navigation}) => {
         <View style={styles.line} />
 
         <View style={styles.teleContainer}>
-          <Text style={styles.text}>Username</Text>
           <View style={styles.iconContainer}>
             <Icon
               name="person-circle-outline"
@@ -73,13 +75,14 @@ const ProfileScreen = ({navigation}) => {
               color={GlobalStyles.colors.white}
             />
           </View>
+          <Text style={styles.text}>{Translation.word.username}</Text>
+
         </View>
         <View style={styles.telephone}>
           <Text style={styles.txtItem}>{user.authUsername}</Text>
         </View>
         <View style={styles.line} />
         <View style={styles.teleContainer}>
-          <Text style={styles.text}>Proffesion</Text>
           <View style={styles.iconContainer}>
             <Icon
               name="briefcase"
@@ -87,13 +90,15 @@ const ProfileScreen = ({navigation}) => {
               color={GlobalStyles.colors.white}
             />
           </View>
+          <Text style={styles.text}>{Translation.word.proffesion}</Text>
+
         </View>
         <View style={styles.telephone}>
           <Text style={styles.txtItem}>{user.proffession}</Text>
         </View>
         <View style={styles.line} />
         <View style={styles.teleContainer}>
-          <Text style={[styles.text, {fontSize: 24}]}>Interests</Text>
+          <Text style={[styles.text, {fontSize: 24}]}>{Translation.word.interests}</Text>
         </View>
 
         <View style={styles.teleContainer}>
@@ -145,7 +150,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   nameContainer: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical:20,
@@ -153,7 +158,7 @@ const styles = StyleSheet.create({
   dotContainer: {
     width: 15,
     height: 15,
-    marginStart: 5,
+    marginRight: 5,
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
@@ -184,17 +189,17 @@ const styles = StyleSheet.create({
   },
   teleContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 5,
-    paddingRight: 20,
+    paddingLeft: 20,
     flexWrap: 'wrap',
   },
   text: {
     color: GlobalStyles.colors.txtColor,
     fontSize: 16,
 
-    marginRight: 10,
+    marginLeft: 10,
     fontFamily: 'Bold',
   },
   iconContainer: {
@@ -208,12 +213,12 @@ const styles = StyleSheet.create({
   },
   telephone: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     marginTop: 5,
   },
   txtItem: {
     color: GlobalStyles.colors.txtColor,
-    paddingRight: 20,
+    paddingLeft: 20,
     fontFamily: 'Medium',
   },
 });

@@ -11,16 +11,11 @@ const CustomInput = ({ placeholder, icon, value, onChangeText, secureTextEntry,k
   };
   return (
     <View style={styles.inputContainer}>
-      {secureTextEntry && <TouchableOpacity onPress={togglePasswordVisibility} style={styles.iconContainer}>
-          <Icon
-            name={isPasswordVisible ?  'eye' : 'eye-off'}
-            size={24}
-            color={GlobalStyles.colors.iconColor}
-          />
-        </TouchableOpacity>}
-      
+     
+        <Icon name={icon} size={24} color={GlobalStyles.colors.iconColor} style={styles.icon} />
+
       <TextInput 
-      textAlign='right'
+      textAlign='left'
         style={styles.input}
         placeholder={placeholder}
         value={value}
@@ -29,8 +24,13 @@ const CustomInput = ({ placeholder, icon, value, onChangeText, secureTextEntry,k
         secureTextEntry={secureTextEntry && !isPasswordVisible}
         placeholderTextColor={GlobalStyles.colors.hint}
       />
-      
-        <Icon name={icon} size={24} color={GlobalStyles.colors.iconColor} style={styles.icon} />
+       {secureTextEntry && <TouchableOpacity onPress={togglePasswordVisibility} style={styles.iconContainer}>
+          <Icon
+            name={isPasswordVisible ?  'eye' : 'eye-off'}
+            size={24}
+            color={GlobalStyles.colors.iconColor}
+          />
+        </TouchableOpacity>}
     </View>
   );
 };
@@ -47,12 +47,12 @@ const styles = StyleSheet.create({
     color:GlobalStyles.colors.hint,
   },
   icon: {
-    marginRight: 10,
+    marginRight: 5,
   },
   input: {
     flex: 1,
     color:GlobalStyles.colors.txtColor,
-    padding:10,
+    // padding:10,
     fontSize:16,
     
   },

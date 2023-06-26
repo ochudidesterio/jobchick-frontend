@@ -6,6 +6,7 @@ import api from '../api/api';
 import JobRolesList from '../components/JobRolesList';
 import QualificationList from '../components/QualificationList';
 import CustomOutLineButton from '../components/CustomOutlineButton';
+import { Translation } from '../util/WordsUtil';
 
 const DetailsScreen = ({route}) => {
   const [roles, setRoles] = useState([]);
@@ -56,20 +57,21 @@ const DetailsScreen = ({route}) => {
           <Text style={styles.type}>
             {data.level} | {data.type} | {data.region}
           </Text>
-          <Text style={styles.salary}>{data.salary} / Year</Text>
+          <Text style={styles.salary}>{data.salary} {Translation.word.perYear}</Text>
         </View>
 
         <View style={styles.jdContainer}>
+        <Text style={styles.jd}>{Translation.word.jobDesc}</Text>
           <Text style={styles.time}>
             Posted {calculateTimeElapsed(data.timestamp)}
           </Text>
-          <Text style={styles.jd}>Job Description</Text>
+         
         </View>
         <Text style={styles.description}>{data.description}</Text>
         <JobRolesList roles={roles} />
         <QualificationList qualifications={qualifications} />
         <View style={styles.applyContainer}>
-          <CustomOutLineButton title="Proceed to Application" />
+          <CustomOutLineButton title={Translation.word.proceedToapplication} />
         </View>
       </View>
     </ScrollView>

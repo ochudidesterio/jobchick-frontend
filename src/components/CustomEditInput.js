@@ -9,7 +9,7 @@ const CustomEditInput = ({placeholder, value, onChangeText,keyboard}) => {
         <Text style={styles.text}>{placeholder}</Text>
       <View style={styles.inputContainer}>
         <TextInput
-          textAlign="right"
+          textAlign="left"
           style={styles.input}
           value={value}
           onChangeText={onChangeText}
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   text:{
     color:GlobalStyles.colors.txtColor,
-    textAlign:"right",
+    textAlign:"left",
     fontFamily:"Bold",
     fontSize:16,
     marginBottom:5,

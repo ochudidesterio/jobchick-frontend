@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {GlobalStyles} from '../colors';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import UserImage from './UserImage';
+import { Translation } from '../util/WordsUtil';
 
 const CircularImageView = ({imageSource, onPress, icon, user}) => {
   let percent;
@@ -76,7 +77,7 @@ const CircularImageView = ({imageSource, onPress, icon, user}) => {
       {/* </View> */}
 
       <View style={styles.touchBorder}>
-        <Text style={styles.touchText}>Progress, {getProgressPercentage().toFixed()}%</Text>
+        <Text style={styles.touchText}>{Translation.word.progress}, {getProgressPercentage().toFixed()}%</Text>
       </View>
     </View>
   );
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
   },
   editButton: {
     position: 'absolute',
-    left: 20,
+    right: 20,
     bottom: 30,
     justifyContent: 'center',
     alignItems: 'center',
@@ -149,13 +150,13 @@ const styles = StyleSheet.create({
   },
   touchEnd: {
     position: 'absolute',
-    left: 120,
+    right: 120,
     bottom: 10,
     top: 35,
     justifyContent: 'center',
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
     width: 90,
-    paddingRight: 10,
+    paddingLeft: 10,
     height: 30,
 
     borderRadius: 50,
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
   },
   touchEndTxt: {
     color: GlobalStyles.colors.white,
-    textAlign: 'right',
+    textAlign: 'left',
     fontFamily: 'Bold',
   },
 });

@@ -2,17 +2,19 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {GlobalStyles} from '../colors';
+import { Translation } from '../util/WordsUtil';
 
 const JobDetailCard = ({location, timePosted, salary,level,company}) => {
     
   return (
     <View style={styles.container}>
       <View style={styles.top}>
+        
+        <Text style={styles.txt}>{company}</Text>
         <View style={styles.locationContainer}>
           <Text style={styles.txt}>{location}</Text>
           <Icon name="location" size={15} color={GlobalStyles.colors.red} />
         </View>
-        <Text style={styles.txt}>{company}</Text>
       </View>
       <View style={styles.item}>
         <Text style={styles.txt}>{salary}</Text>
@@ -23,7 +25,7 @@ const JobDetailCard = ({location, timePosted, salary,level,company}) => {
         <Icon name="briefcase" size={15} color={GlobalStyles.colors.txtColor} />
       </View>
       <View style={styles.item}>
-      <Text style={styles.txt}>Posted {timePosted}</Text>
+      <Text style={styles.txt}>{Translation.word.posted} {timePosted}</Text>
       </View>
     </View>
   );
@@ -53,7 +55,7 @@ const styles = StyleSheet.create({
   },
   item: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     marginTop:3,
   },
 });

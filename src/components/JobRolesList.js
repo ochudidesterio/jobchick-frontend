@@ -1,11 +1,12 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {GlobalStyles} from '../colors';
+import { Translation } from '../util/WordsUtil';
 
 const JobRolesList = ({roles}) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Roles and Responsibilities:</Text>
+      <Text style={styles.title}>{Translation.word.rolesandresponsibilities}</Text>
       {roles.map((role, index) => (
         <View key={role.id} style={styles.roleConatiner}>
           <Text style={styles.role}>({`${index + 1}.`}) {role.role}</Text>
