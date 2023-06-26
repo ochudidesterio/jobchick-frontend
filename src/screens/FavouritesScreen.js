@@ -1,4 +1,4 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet,  TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import api from '../api/api';
@@ -8,8 +8,7 @@ import {GlobalStyles} from '../colors';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import Animated,{SlideInLeft,SlideOutRight} from 'react-native-reanimated';
-import { async } from '@firebase/util';
+
 
 const FavouritesScreen = () => {
   const jobs = useSelector(state => state.auth.likeJob);
@@ -106,7 +105,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     marginHorizontal: 10,
     borderRadius: 10,
-    elevation: 15,
+    elevation: 1,
   },
 
   hiddenItem: {

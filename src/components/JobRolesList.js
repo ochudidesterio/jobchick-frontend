@@ -2,11 +2,15 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {GlobalStyles} from '../colors';
 import { Translation } from '../util/WordsUtil';
+import { useSelector } from 'react-redux';
+import getLanguageObject from '../util/LanguageUtil';
 
 const JobRolesList = ({roles}) => {
+  const language = useSelector(state=>state.auth.language)
+  const util = getLanguageObject(language)
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{Translation.word.rolesandresponsibilities}</Text>
+      <Text style={styles.title}>{util.rolesandresponsibilities}</Text>
       {roles.map((role, index) => (
         <View key={role.id} style={styles.roleConatiner}>
           <Text style={styles.role}>({`${index + 1}.`}) {role.role}</Text>
@@ -27,6 +31,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ExtraBold',
     marginTop: 10,
     fontSize: 15,
+    textAlign:"left",
   },
  
   role: {

@@ -55,9 +55,7 @@ const HomeScreen = ({navigation}) => {
   currentJob = jobs[currentIndex];
   nextJob = jobs[nextIndex];
 
-  console.log('Current Job', jobs.length);
-  console.log('Current Index', currentIndex);
-  console.log('Current Next', nextIndex);
+ 
   useEffect(() => {
     getJobs();
   }, []);

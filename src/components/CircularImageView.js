@@ -3,14 +3,24 @@ import {View, Image, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {GlobalStyles} from '../colors';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
-import UserImage from './UserImage';
-import { Translation } from '../util/WordsUtil';
+import {useSelector} from 'react-redux';
+import getLanguageObject from '../util/LanguageUtil';
 
 const CircularImageView = ({imageSource, onPress, icon, user}) => {
-  let percent;
-
+  const language = useSelector(state => state.auth.language);
+  const util = getLanguageObject(language);
   const getProgressPercentage = () => {
-    const {firstName, lastName, email,gender,profileImage, phoneNumber, authUsername,age,proffession} = user;
+    const {
+      firstName,
+      lastName,
+      email,
+      gender,
+      profileImage,
+      phoneNumber,
+      authUsername,
+      age,
+      proffession,
+    } = user;
     const progressProperties = [
       firstName,
       lastName,
@@ -20,7 +30,7 @@ const CircularImageView = ({imageSource, onPress, icon, user}) => {
       age,
       proffession,
       gender,
-      profileImage
+      profileImage,
     ];
     const nonEmptyProperties = progressProperties.filter(prop => prop);
 
@@ -42,42 +52,37 @@ const CircularImageView = ({imageSource, onPress, icon, user}) => {
       </TouchableOpacity>
       {/* <UserImage user={user}/> */}
       {/* <View style={[styles.imageContainer]}> */}
-        <AnimatedCircularProgress
-          style={styles.progressCircle}
-          progress={100}
-          size={160}
-          fill={getProgressPercentage()}
-          thickness={5}
-          width={4}
-          tintTransparency={true}
-          rotation={180}
-          
-          tintColor={GlobalStyles.colors.colorPrimaryDark}>
-          {() => (
-            
-              
-                <View style={styles.imageContainer}>
-                <Image
-                source={imageSource}
-                style={[
-                  styles.profile,
-                ]}
-                resizeMode="cover"
-              />
-<View style={styles.imageBorder} />
-              </View>
-             
-            
-          )}
-        </AnimatedCircularProgress>
+      <AnimatedCircularProgress
+        style={styles.progressCircle}
+        progress={100}
+        size={160}
+        fill={getProgressPercentage()}
+        thickness={5}
+        width={4}
+        tintTransparency={true}
+        rotation={180}
+        tintColor={GlobalStyles.colors.colorPrimaryDark}>
+        {() => (
+          <View style={styles.imageContainer}>
+            <Image
+              source={imageSource}
+              style={[styles.profile]}
+              resizeMode="cover"
+            />
+            <View style={styles.imageBorder} />
+          </View>
+        )}
+      </AnimatedCircularProgress>
 
-        {/* <View style={getMaskStyle()}> */}
-        {/* <Image source={imageSource} style={styles.profile} resizeMode="cover" /> */}
-        {/* </View> */}
+      {/* <View style={getMaskStyle()}> */}
+      {/* <Image source={imageSource} style={styles.profile} resizeMode="cover" /> */}
+      {/* </View> */}
       {/* </View> */}
 
       <View style={styles.touchBorder}>
-        <Text style={styles.touchText}>{Translation.word.progress}, {getProgressPercentage().toFixed()}%</Text>
+        <Text style={styles.touchText}>
+          {util.progress}, {getProgressPercentage().toFixed()}%
+        </Text>
       </View>
     </View>
   );
@@ -89,27 +94,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
- 
+
   progressCircle: {
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
   },
-  imageContainer:{
-    width:152,
-    height:152,
-    borderRadius:150/2,
+  imageContainer: {
+    width: 152,
+    height: 152,
+    borderRadius: 150 / 2,
     overflow: 'hidden',
-    elevation:5,
-    position:"relative"
-   
+    elevation: 5,
+    position: 'relative',
   },
   imageBorder: {
     position: 'absolute',
     top: 0,
     left: 0,
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     borderRadius: 100,
     borderWidth: 1,
     borderColor: '#ccc',
@@ -119,8 +123,7 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
     flex: 1,
-    borderRadius: 100, 
-   
+    borderRadius: 100,
   },
   editButton: {
     position: 'absolute',
@@ -161,7 +164,7 @@ const styles = StyleSheet.create({
 
     borderRadius: 50,
     backgroundColor: GlobalStyles.colors.red,
-    overflow:"hidden"
+    overflow: 'hidden',
   },
   touchEndTxt: {
     color: GlobalStyles.colors.white,

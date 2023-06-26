@@ -1,17 +1,18 @@
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import {useSelector} from 'react-redux';
 import CircularImageView from '../components/CircularImageView';
 import {GlobalStyles} from '../colors';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Font from 'react-native-vector-icons/Fontisto';
 import InterestItem from '../components/InterestItem';
-import UserImage from '../components/UserImage';
-import { Translation } from '../util/WordsUtil';
+
+import getLanguageObject from '../util/LanguageUtil';
 
 const ProfileScreen = ({navigation}) => {
   const user = useSelector(state => state.auth.user);
-  console.log(user);
+  const language = useSelector(state => state.auth.language);
+  const util = getLanguageObject(language);
   const handleEditPress = () => {
     navigation.navigate('editProfile');
   };
@@ -35,7 +36,9 @@ const ProfileScreen = ({navigation}) => {
       </View>
       <View style={styles.details}>
         <View style={styles.nameContainer}>
-          <Text style={styles.nameLeft}>,({user.age == null ? 0 : user.age})</Text>
+          <Text style={styles.nameLeft}>
+            ({user.age == null ? 0 : user.age})
+          </Text>
           <Text style={styles.name}>
             {user.firstName === null || user.lastName === null
               ? user.authUsername
@@ -48,8 +51,7 @@ const ProfileScreen = ({navigation}) => {
           <View style={styles.iconContainer}>
             <Font name="phone" size={15} color={GlobalStyles.colors.white} />
           </View>
-          <Text style={styles.text}>{Translation.word.phonenumber}</Text>
-
+          <Text style={styles.text}>{util.phonenumber}</Text>
         </View>
         <View style={styles.telephone}>
           <Text style={styles.txtItem}>{user.phoneNumber}</Text>
@@ -59,8 +61,7 @@ const ProfileScreen = ({navigation}) => {
           <View style={styles.iconContainer}>
             <Icon name="mail" size={15} color={GlobalStyles.colors.white} />
           </View>
-          <Text style={styles.text}>{Translation.word.email}</Text>
-
+          <Text style={styles.text}>{util.email}</Text>
         </View>
         <View style={styles.telephone}>
           <Text style={styles.txtItem}>{user.email}</Text>
@@ -75,8 +76,7 @@ const ProfileScreen = ({navigation}) => {
               color={GlobalStyles.colors.white}
             />
           </View>
-          <Text style={styles.text}>{Translation.word.username}</Text>
-
+          <Text style={styles.text}>{util.username}</Text>
         </View>
         <View style={styles.telephone}>
           <Text style={styles.txtItem}>{user.authUsername}</Text>
@@ -90,15 +90,14 @@ const ProfileScreen = ({navigation}) => {
               color={GlobalStyles.colors.white}
             />
           </View>
-          <Text style={styles.text}>{Translation.word.proffesion}</Text>
-
+          <Text style={styles.text}>{util.proffesion}</Text>
         </View>
         <View style={styles.telephone}>
           <Text style={styles.txtItem}>{user.proffession}</Text>
         </View>
         <View style={styles.line} />
         <View style={styles.teleContainer}>
-          <Text style={[styles.text, {fontSize: 24}]}>{Translation.word.interests}</Text>
+          <Text style={[styles.text, {fontSize: 24}]}>{util.interests}</Text>
         </View>
 
         <View style={styles.teleContainer}>
@@ -153,7 +152,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical:20,
+    paddingVertical: 20,
   },
   dotContainer: {
     width: 15,
@@ -192,7 +191,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 5,
-    paddingLeft: 20,
+    marginLeft: 20,
     flexWrap: 'wrap',
   },
   text: {
@@ -218,7 +217,7 @@ const styles = StyleSheet.create({
   },
   txtItem: {
     color: GlobalStyles.colors.txtColor,
-    paddingLeft: 20,
+    marginLeft:25,
     fontFamily: 'Medium',
   },
 });

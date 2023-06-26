@@ -5,33 +5,13 @@ import ParagraghView from '../components/ParagraghView';
 import JobDetailCard from './JobDetailCard';
 import { useNavigation } from '@react-navigation/native';
 import calculateTimeElapsed from '../util/timeUtils';
-import { Translation } from '../util/WordsUtil';
+import { useSelector } from 'react-redux';
+import getLanguageObject from '../util/LanguageUtil';
 
 const JobCard = ({data}) => {
   const navigation = useNavigation()
-  // const calculateTimeElapsed = timestamp => {
-  //   const currentTime = new Date();
-  //   const pastTime = new Date(timestamp);
-
-    
-  //   const timeDifference = currentTime - pastTime;
-
-    
-  //   const seconds = Math.floor(timeDifference / 1000);
-  //   const minutes = Math.floor(seconds / 60);
-  //   const hours = Math.floor(minutes / 60);
-  //   const days = Math.floor(hours / 24);
-
-  //   if (days > 0) {
-  //     return `${days} day${days > 1 ? 's' : ''} ago`;
-  //   } else if (hours > 0) {
-  //     return `${hours} hr${hours > 1 ? 's' : ''} ago`;
-  //   } else if (minutes > 0) {
-  //     return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
-  //   } else {
-  //     return `${seconds} sec${seconds !== 1 ? 's' : ''} ago`;
-  //   }
-  // };
+  const language = useSelector(state=>state.auth.language)
+  const util = getLanguageObject(language)
 
   const showMoreDetails = () => {
     navigation.navigate("Details",{data})
@@ -54,11 +34,11 @@ const JobCard = ({data}) => {
         level={data.level}
         salary={data.salary}
         location={data.region}
-        timePosted={calculateTimeElapsed(data.timestamp)}
+        timePosted={calculateTimeElapsed(data.timestamp,util.hr,util.min,util.sec,util.s,util.ago,util.day)}
         company={data.company.name}
       />
 
-      <Text style={styles.desc}>{Translation.word.description}</Text>
+      <Text style={styles.desc}>{util.description}</Text>
       <ParagraghView paragraph={data.description} onPress={showMoreDetails} />
     </View>
   );

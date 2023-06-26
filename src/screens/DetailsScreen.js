@@ -6,12 +6,15 @@ import api from '../api/api';
 import JobRolesList from '../components/JobRolesList';
 import QualificationList from '../components/QualificationList';
 import CustomOutLineButton from '../components/CustomOutlineButton';
-import { Translation } from '../util/WordsUtil';
+import { useSelector } from 'react-redux';
+import getLanguageObject from '../util/LanguageUtil';
 
 const DetailsScreen = ({route}) => {
   const [roles, setRoles] = useState([]);
   const [qualifications, setQualifications] = useState([]);
   const {data} = route.params;
+  const language = useSelector(state=>state.auth.language)
+  const util=getLanguageObject(language)
 
   useEffect(() => {
     fetchRoles(data.id);
@@ -57,13 +60,13 @@ const DetailsScreen = ({route}) => {
           <Text style={styles.type}>
             {data.level} | {data.type} | {data.region}
           </Text>
-          <Text style={styles.salary}>{data.salary} {Translation.word.perYear}</Text>
+          <Text style={styles.salary}>{data.salary} {util.perYear}</Text>
         </View>
 
         <View style={styles.jdContainer}>
-        <Text style={styles.jd}>{Translation.word.jobDesc}</Text>
+        <Text style={styles.jd}>{util.jobDesc}</Text>
           <Text style={styles.time}>
-            Posted {calculateTimeElapsed(data.timestamp)}
+            {util.posted} {calculateTimeElapsed(data.timestamp,util.hr,util.min,util.sec,util.s,util.ago,util.day)}
           </Text>
          
         </View>
@@ -71,7 +74,7 @@ const DetailsScreen = ({route}) => {
         <JobRolesList roles={roles} />
         <QualificationList qualifications={qualifications} />
         <View style={styles.applyContainer}>
-          <CustomOutLineButton title={Translation.word.proceedToapplication} />
+          <CustomOutLineButton title={util.proceedToapplication} />
         </View>
       </View>
     </ScrollView>

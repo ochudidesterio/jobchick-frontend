@@ -1,6 +1,6 @@
 import {Translation} from './WordsUtil';
 
-const calculateTimeElapsed = timestamp => {
+const calculateTimeElapsed = (timestamp,hr,min,sec,s,ago,day)=> {
   const currentTime = new Date();
   const pastTime = new Date(timestamp);
 
@@ -12,21 +12,21 @@ const calculateTimeElapsed = timestamp => {
   const days = Math.floor(hours / 24);
 
   if (days > 0) {
-    return `${days} ${Translation.word.day}${
+    return `${days} ${day}${
       days > 1 ? Translation.word.s : ''
-    } ${Translation.word.ago}`;
+    } ${ago}`;
   } else if (hours > 0) {
-    return `${hours} ${Translation.word.hr}${
+    return `${hours} ${hr}${
       hours > 1 ? Translation.word.s : ''
-    } ${Translation.word.ago}`;
+    } ${ago}`;
   } else if (minutes > 0) {
-    return `${minutes} ${Translation.word.min}${
+    return `${minutes} ${min}${
       minutes > 1 ? Translation.word.s : ''
-    } ${Translation.word.ago}`;
+    } ${ago}`;
   } else {
-    return `${seconds} ${Translation.word.sec}${
+    return `${seconds} ${sec}${
       seconds !== 1 ? Translation.word.s : ''
-    } ${Translation.word.ago}`;
+    } ${ago}`;
   }
 };
 

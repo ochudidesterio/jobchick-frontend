@@ -9,6 +9,7 @@ const authSlice = createSlice({
     loading: false,
     error: null,
     likeJob: [],
+    language:""
   },
   reducers: {
     loginStart(state) {
@@ -52,6 +53,9 @@ const authSlice = createSlice({
     unlikeJob(state, {payload}) {
       state.likeJob = state.likeJob.filter(job => job.id !== payload.id);
     },
+    setLanguage(state,{payload}){
+      state.language = payload
+    }
   },
 });
 
@@ -64,6 +68,7 @@ export const {
   likeJob,
   unlikeJob,
   setLikeJob,
+  setLanguage
 } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -3,16 +3,18 @@ import {View, Image, StyleSheet} from 'react-native';
 import Animated, {BounceIn} from 'react-native-reanimated';
 import {GlobalStyles} from '../colors';
 import {useSelector} from 'react-redux';
-import { Text } from 'react-native-animatable';
 import { Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useDispatch } from 'react-redux';
+import { setLanguage } from '../store/slices/authSlice';
 
 
 const SplashScreen = ({navigation}) => {
+  const dispatch = useDispatch()
   const loggedIn = useSelector(state => state.auth.loggedIn);
   const colors = [GlobalStyles.colors.colorPrimaryDark,  GlobalStyles.colors.colorPrimaryLight];
   const { width, height } = Dimensions.get('window');
-
+  useEffect(()=>{dispatch(setLanguage("he"))})
   useEffect(() => {
     const timer = setTimeout(() => {
       {

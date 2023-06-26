@@ -7,9 +7,12 @@ import Animated, {SlideInDown} from 'react-native-reanimated';
 import {Text, Image} from 'react-native-animatable';
 import {useNavigation} from '@react-navigation/native';
 import api from '../api/api';
-import { Translation } from '../util/WordsUtil';
+import { useSelector } from 'react-redux';
+import getLanguageObject from '../util/LanguageUtil';
 
 const SignUpScreen = () => {
+  const language = useSelector(state=>state.auth.language)
+  const util = getLanguageObject(language)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmpassword, setConfirmPassword] = useState('');
@@ -43,22 +46,22 @@ const SignUpScreen = () => {
       let isValid = true;
 
       if (username.trim().length === 0) {
-        setUsernameError(Translation.word.usernameError);
+        setUsernameError(util.usernameError);
         isValid = false;
       }
       if (password.trim().length < 6) {
-        setPasswordError(Translation.word.passlenthError);
+        setPasswordError(util.passlenthError);
         isValid = false;
       }
       if (!isValidEmail(email)) {
-        setEmailError(Translation.word.txtEmailError);
+        setEmailError(util.txtEmailError);
         isValid = false;
       }
       if (confirmpassword.trim().length === 0) {
-        setConfirmPasswordError(Translation.word.txtConfirmpass);
+        setConfirmPasswordError(util.txtConfirmpass);
         isValid = false;
       } else if (password !== confirmpassword) {
-        setConfirmPasswordError(Translation.word.notmatch);
+        setConfirmPasswordError(util.notmatch);
         isValid = false;
       }
 
@@ -93,7 +96,7 @@ const SignUpScreen = () => {
             source={require('../images/logo.png')}
           />
         </View>
-        <Text style={styles.text}>{Translation.word.createyouraccount}</Text>
+        <Text style={styles.text}>{util.createyouraccount}</Text>
       </View>
       <Animated.View
         entering={SlideInDown.duration(1000)}
@@ -103,7 +106,7 @@ const SignUpScreen = () => {
             <Text style={styles.errorText}>{authError}</Text>
           ) : null}
           <CustomInput
-            placeholder={Translation.word.username}
+            placeholder={util.username}
             icon="person"
             value={username}
             onChangeText={setUsername}
@@ -114,7 +117,7 @@ const SignUpScreen = () => {
           ) : null}
 
           <CustomInput
-            placeholder={Translation.word.email}
+            placeholder={util.email}
             icon="mail"
             keyboard="email-address"
             value={email}
@@ -126,7 +129,7 @@ const SignUpScreen = () => {
           ) : null}
 
           <CustomInput
-            placeholder={Translation.word.password}
+            placeholder={util.password}
             icon="lock-closed"
             value={password}
             onChangeText={setPassword}
@@ -137,7 +140,7 @@ const SignUpScreen = () => {
           ) : null}
 
           <CustomInput
-            placeholder={Translation.word.confirmPassword}
+            placeholder={util.confirmPassword}
             icon="lock-closed"
             value={confirmpassword}
             onChangeText={setConfirmPassword}
@@ -147,11 +150,11 @@ const SignUpScreen = () => {
             <Text style={styles.errorText}>{confirmpasswordError}</Text>
           ) : null}
 
-          <CustomButton title={Translation.word.register} onPress={handleRegister} />
+          <CustomButton title={util.register} onPress={handleRegister} />
           <View style={styles.signUpContainer}>
-            <Text style={styles.forgot}>{Translation.word.privacyPolicy}</Text>
+            <Text style={styles.forgot}>{util.privacyPolicy}</Text>
             <Text onPress={handleSignIn} style={styles.forgot}>
-              {Translation.word.signIn}
+              {util.signIn}
             </Text>
           </View>
         </ScrollView>

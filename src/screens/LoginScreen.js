@@ -10,12 +10,14 @@ import {useDispatch} from 'react-redux';
 import {loginFailure, loginSuccess} from '../store/slices/authSlice';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Translation } from '../util/WordsUtil';
+import { useSelector } from 'react-redux';
+import getLanguageObject from '../util/LanguageUtil';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-
+  const language = useSelector(state=>state.auth.language)
+  const util = getLanguageObject(language)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
@@ -34,11 +36,11 @@ const LoginScreen = () => {
       let isValid = true;
 
       if (email.trim().length === 0) {
-        setEmailError(Translation.word.loginEmailError);
+        setEmailError(util.loginEmailError);
         isValid = false;
       }
       if (password.trim().length === 0) {
-        setPasswordError(Translation.word.loginPassError);
+        setPasswordError(util.loginPassError);
         isValid = false;
       }
 
@@ -65,7 +67,6 @@ const LoginScreen = () => {
   const saveTokenToStorage = async token => {
     try {
       await AsyncStorage.setItem('token', token);
-      console.log('Token saved to AsyncStorage:', token);
     } catch (error) {
       console.log('Error saving token to AsyncStorage:', error);
     }
@@ -84,7 +85,7 @@ const LoginScreen = () => {
             source={require('../images/logo.png')}
           />
         </View>
-        <Text style={styles.text}>{Translation.word.login}</Text>
+        <Text style={styles.text}>{util.login}</Text>
       </View>
       <Animated.View
         entering={SlideInDown.duration(1000)}
@@ -93,7 +94,7 @@ const LoginScreen = () => {
             <Text style={styles.errorText}>{authError}</Text>
           ) : null}
         <CustomInput
-          placeholder={Translation.word.email}
+          placeholder={util.email}
           icon="mail"
           value={email}
           keyboard="email-address"
@@ -104,7 +105,7 @@ const LoginScreen = () => {
             <Text style={styles.errorText}>{emailError}</Text>
           ) : null}
         <CustomInput
-          placeholder={Translation.word.password}
+          placeholder={util.password}
           icon="lock-closed"
           value={password}
           onChangeText={setPassword}
@@ -114,11 +115,11 @@ const LoginScreen = () => {
             <Text style={styles.errorText}>{passwordError}</Text>
           ) : null}
 
-        <CustomButton title={Translation.word.login} onPress={handleLogin} />
+        <CustomButton title={util.login} onPress={handleLogin} />
         <View style={styles.signUpContainer}>
-          <Text style={styles.forgot}>{Translation.word.forgotPassword}</Text>
+          <Text style={styles.forgot}>{util.forgotPassword}</Text>
           <Text onPress={handleSignUp} style={styles.forgot}>
-            {Translation.word.signUp}
+            {util.signUp}
           </Text>
         </View>
       </Animated.View>

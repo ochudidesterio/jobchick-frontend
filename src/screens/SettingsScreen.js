@@ -1,13 +1,17 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import CustomButton from '../components/CustomButton';
 import {CommonActions} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {logout} from '../store/slices/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Translation } from '../util/WordsUtil';
+import SwitchButton from '../components/SwitchButton';
+import { useSelector } from 'react-redux';
+import getLanguageObject from '../util/LanguageUtil';
 
 const SettingsScreen = ({navigation}) => {
+  const language = useSelector(state=>state.auth.language)
+  const util = getLanguageObject(language)
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logout());
@@ -19,9 +23,16 @@ const SettingsScreen = ({navigation}) => {
       }),
     );
   };
+ 
+ 
   return (
     <View style={styles.container}>
-      <CustomButton title={Translation.word.logout} onPress={handleLogout} />
+      <View>
+        <SwitchButton />
+      </View>
+      <View>
+      <CustomButton title={util.logout} onPress={handleLogout} />
+      </View>
     </View>
   );
 };
@@ -31,7 +42,6 @@ export default SettingsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     margin: 20,
   },
 });

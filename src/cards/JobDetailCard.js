@@ -2,10 +2,12 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {GlobalStyles} from '../colors';
-import { Translation } from '../util/WordsUtil';
+import { useSelector } from 'react-redux';
+import getLanguageObject from '../util/LanguageUtil';
 
 const JobDetailCard = ({location, timePosted, salary,level,company}) => {
-    
+    const language = useSelector(state=>state.auth.language)
+    const util = getLanguageObject(language)
   return (
     <View style={styles.container}>
       <View style={styles.top}>
@@ -25,7 +27,7 @@ const JobDetailCard = ({location, timePosted, salary,level,company}) => {
         <Icon name="briefcase" size={15} color={GlobalStyles.colors.txtColor} />
       </View>
       <View style={styles.item}>
-      <Text style={styles.txt}>{Translation.word.posted} {timePosted}</Text>
+      <Text style={styles.txt}>{util.posted} {timePosted}</Text>
       </View>
     </View>
   );
