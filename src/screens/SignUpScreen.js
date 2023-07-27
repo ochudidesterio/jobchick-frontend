@@ -183,7 +183,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingVertical: 50,
+    paddingVertical: 30,
+    marginTop: 30,
   },
   logoConatiner: {
     height: 100,

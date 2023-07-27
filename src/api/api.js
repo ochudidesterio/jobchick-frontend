@@ -33,7 +33,7 @@ const setAuthorizationHeader = async () => {
 // );
 setAuthorizationHeader()
 const api = axios.create({
-  //baseURL: 'http://192.168.0.103:8080/jobchick',//local
+  //baseURL: 'http://192.168.0.103/jobchick',//local
    baseURL:  'http://172.105.51.141/jobchick',//production
 });
 

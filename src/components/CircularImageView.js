@@ -81,7 +81,7 @@ const CircularImageView = ({imageSource, onPress, icon, user}) => {
 
       <View style={styles.touchBorder}>
         <Text style={styles.touchText}>
-          {util.progress}, {getProgressPercentage().toFixed()}%
+          {util.progress} {getProgressPercentage().toFixed()}%
         </Text>
       </View>
     </View>

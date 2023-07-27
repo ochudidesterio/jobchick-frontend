@@ -12,21 +12,13 @@ const calculateTimeElapsed = (timestamp,hr,min,sec,s,ago,day)=> {
   const days = Math.floor(hours / 24);
 
   if (days > 0) {
-    return `${days} ${day}${
-      days > 1 ? Translation.word.s : ''
-    } ${ago}`;
+    return `${ago} ${days} ${day}`;
   } else if (hours > 0) {
-    return `${hours} ${hr}${
-      hours > 1 ? Translation.word.s : ''
-    } ${ago}`;
+    return `${ago} ${hours} ${hr}`;
   } else if (minutes > 0) {
-    return `${minutes} ${min}${
-      minutes > 1 ? Translation.word.s : ''
-    } ${ago}`;
+    return `${ago} ${minutes} ${min}`;
   } else {
-    return `${seconds} ${sec}${
-      seconds !== 1 ? Translation.word.s : ''
-    } ${ago}`;
+    return `${ago} ${seconds} ${sec}`;
   }
 };
 

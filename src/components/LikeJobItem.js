@@ -3,7 +3,8 @@ import React from 'react';
 import {GlobalStyles} from '../colors';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const LikeJobItem = ({item}) => {
+const LikeJobItem = ({item,isGrey}) => {
+ 
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -20,16 +21,16 @@ const LikeJobItem = ({item}) => {
       <View style={styles.detailsContainer}>
         <View style={styles.item}>
           <View style={styles.location}>
-            <Icon name="location" size={20} color={GlobalStyles.colors.red} />
-            <Text style={styles.company}>{item.region}</Text>
+            <Icon name="location" size={20} color={isGrey ? GlobalStyles.colors.blur : GlobalStyles.colors.red} />
+            <Text style={[styles.company,isGrey && styles.greyText]}>{item.region}</Text>
           </View>
-          <Text style={styles.company}>{item.company.name}</Text>
+          <Text style={[styles.company,isGrey && styles.greyText]}>{item.company.name}</Text>
         </View>
         <View>
-          <Text style={styles.title}>{item.title}</Text>
+          <Text style={[styles.title,isGrey && styles.greyText]}>{item.title}</Text>
         </View>
         <View>
-          <Text style={styles.company}>
+          <Text style={[styles.company,isGrey && styles.greyText]}>
             {item.level} | {item.type}
           </Text>
         </View>
@@ -47,9 +48,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 3,
     height: 100,
+    backgroundColor:GlobalStyles.colors.white
+    
   },
   imageContainer: {
-    flex: 1,
+    flex: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
     paddingRight: 3,
@@ -57,7 +60,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   detailsContainer: {
-    flex: 2,
+    flex: 2.5,
     marginLeft: 3,
   },
   title: {
@@ -68,7 +71,7 @@ const styles = StyleSheet.create({
 
   headAvatar: {
     width: '100%',
-    height: '100%',
+    height: '50%',
   },
   item: {
     flexDirection: 'row-reverse',
@@ -81,6 +84,10 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 13,
   },
+  greyText: {
+    color: GlobalStyles.colors.blur, // Change the text color to grey
+  },
+
   location: {
     flexDirection: 'row',
     marginRight:3

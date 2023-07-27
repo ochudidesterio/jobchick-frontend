@@ -144,7 +144,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingVertical: 50,
+     paddingVertical: 30,
+     marginTop: 30,
   },
   logoConatiner: {
     height: 100,
@@ -159,7 +160,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     fontWeight: 'bold',
-    paddingBottom: 20,
     color: GlobalStyles.colors.white,
   },
   forgot: {

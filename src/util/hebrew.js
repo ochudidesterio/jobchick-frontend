@@ -4,7 +4,7 @@ export default {
     //login page
     email:"אימייל",
     password:"סיסמא",
-    login:"התחבר",
+    login:"התחברות",
     forgotPassword:"שכחת סיסמא?",
     signUp:"הרשמה",
     loginPassError:"נדרשת סיסמא",
@@ -32,7 +32,7 @@ export default {
     phonenumber:"מספר טלפון",
     proffesion:"מקצוע",
     interests:"תחומי עניין",
-    progress:"התקדמות",
+    progress:"הושלמו",
     //edit profile
     firstName:"שם פרטי",
     lastName:"שם משפחה",

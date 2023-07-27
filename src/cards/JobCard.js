@@ -1,20 +1,21 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {GlobalStyles} from '../colors';
 import ParagraghView from '../components/ParagraghView';
 import JobDetailCard from './JobDetailCard';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import calculateTimeElapsed from '../util/timeUtils';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import getLanguageObject from '../util/LanguageUtil';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const JobCard = ({data}) => {
-  const navigation = useNavigation()
-  const language = useSelector(state=>state.auth.language)
-  const util = getLanguageObject(language)
+  const navigation = useNavigation();
+  const language = useSelector(state => state.auth.language);
+  const util = getLanguageObject(language);
 
   const showMoreDetails = () => {
-    navigation.navigate("Details",{data})
+    navigation.navigate('Details', {data});
   };
 
   return (
@@ -29,17 +30,37 @@ const JobCard = ({data}) => {
         </View>
         <Text style={styles.title}>{data.title}</Text>
       </View>
+      
+        <JobDetailCard
+          level={data.level}
+          salary={data.salary}
+          location={data.region}
+          timePosted={calculateTimeElapsed(
+            data.timestamp,
+            util.hr,
+            util.min,
+            util.sec,
+            util.s,
+            util.ago,
+            util.day,
+          )}
+          company={data.company.name}
+        />
+     
 
-      <JobDetailCard
-        level={data.level}
-        salary={data.salary}
-        location={data.region}
-        timePosted={calculateTimeElapsed(data.timestamp,util.hr,util.min,util.sec,util.s,util.ago,util.day)}
-        company={data.company.name}
-      />
-
-      <Text style={styles.desc}>{util.description}</Text>
-      <ParagraghView paragraph={data.description} onPress={showMoreDetails} />
+      
+        <Text style={styles.desc}>{util.description}</Text>
+    
+     
+<View style={styles.desc}>
+<ParagraghView paragraph={data.description} />
+</View>
+     
+      <View style={styles.chevron}>
+        <TouchableOpacity onPress={showMoreDetails}>
+          <Icon name={'chevron-down'} size={35} color="black" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -54,22 +75,23 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     elevation: 6,
     width: '100%',
-    height: '90%',
-    paddingTop:16,
+    // height: '90%',
+    paddingVertical: 8,
   },
+ 
   title: {
     fontSize: 20,
     fontFamily: 'ExtraBold',
     marginBottom: 8,
     color: GlobalStyles.colors.txtColor,
-    paddingVertical:5
+    paddingVertical: 5,
   },
   desc: {
     fontSize: 12,
     color: '#000',
     fontFamily: 'Bold',
     paddingVertical: 10,
-    paddingHorizontal:16,
+    paddingHorizontal: 16,
     textAlign: 'left',
   },
 
@@ -107,6 +129,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  chevron: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  desc:{
+    marginHorizontal:16,
+  }
 });
 
 export default JobCard;

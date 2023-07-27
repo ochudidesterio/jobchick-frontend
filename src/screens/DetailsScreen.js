@@ -5,9 +5,11 @@ import calculateTimeElapsed from '../util/timeUtils';
 import api from '../api/api';
 import JobRolesList from '../components/JobRolesList';
 import QualificationList from '../components/QualificationList';
-import CustomOutLineButton from '../components/CustomOutlineButton';
-import { useSelector } from 'react-redux';
+import DetailScreenActions from '../components/DetailScreenActions';
+import { useSelector,useDispatch} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import getLanguageObject from '../util/LanguageUtil';
+import { likeJob, setMatchingIds } from '../store/slices/authSlice';
 
 const DetailsScreen = ({route}) => {
   const [roles, setRoles] = useState([]);
@@ -15,6 +17,15 @@ const DetailsScreen = ({route}) => {
   const {data} = route.params;
   const language = useSelector(state=>state.auth.language)
   const util=getLanguageObject(language)
+  const user = useSelector(state=>state.auth.user)
+  const dispatch = useDispatch()
+  const navigation = useNavigation()
+
+  const likeJobData = {
+    jobId: '',
+    userId: '',
+    companyId: '',
+  };
 
   useEffect(() => {
     fetchRoles(data.id);
@@ -39,6 +50,22 @@ const DetailsScreen = ({route}) => {
       console.log('FetchQualificationError', error);
     }
   };
+  const like = async () => {
+    dispatch(likeJob(data));
+   try {
+     likeJobData.jobId = data.id;
+     likeJobData.userId = user.id;
+     likeJobData.companyId = data.company.id;
+     await api.post('/job/like', likeJobData);
+     const res =await api.get(`/likes/user/${user.id}`)
+     dispatch(setMatchingIds(res.data))
+   } catch (error) {
+     console.log('LikeJobError', error);
+   }
+ };
+  const back = async ()=>{
+    navigation.navigate('Home')
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -74,7 +101,7 @@ const DetailsScreen = ({route}) => {
         <JobRolesList roles={roles} />
         <QualificationList qualifications={qualifications} />
         <View style={styles.applyContainer}>
-          <CustomOutLineButton title={util.proceedToapplication} />
+          <DetailScreenActions  like={like} nope={back}  />
         </View>
       </View>
     </ScrollView>
@@ -90,7 +117,7 @@ const styles = StyleSheet.create({
   },
   jobContainer: {
     paddingHorizontal: 26,
-    paddingBottom: 30,
+    paddingBottom: 20,
   },
   avatar: {
     width: "100%",

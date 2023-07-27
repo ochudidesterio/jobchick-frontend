@@ -97,6 +97,6 @@ const styles = StyleSheet.create({
         
       },
       tab:{
-        height:60
+        height:50
       }
 });

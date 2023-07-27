@@ -9,7 +9,12 @@ const authSlice = createSlice({
     loading: false,
     error: null,
     likeJob: [],
-    language:""
+    language:"",
+    hideProfile:false,
+    categories:[],
+    interests:[],
+    matchingIds:[],
+    company:{},
   },
   reducers: {
     loginStart(state) {
@@ -55,6 +60,21 @@ const authSlice = createSlice({
     },
     setLanguage(state,{payload}){
       state.language = payload
+    },
+    setCategories(state,{payload}){
+      state.categories = payload
+    },
+    setInterests(state,{payload}){
+      state.interests = payload
+    },
+    setMatchingIds(state,{payload}){
+      state.matchingIds = payload
+    },
+    setHideProfile(state,{payload}){
+      state.hideProfile = payload
+    },
+    setCompany(state,{payload}){
+      state.company = payload
     }
   },
 });
@@ -68,7 +88,12 @@ export const {
   likeJob,
   unlikeJob,
   setLikeJob,
-  setLanguage
+  setLanguage,
+  setCategories,
+  setInterests,
+  setHideProfile,
+  setCompany,
+  setMatchingIds,
 } = authSlice.actions;
 
 export default authSlice.reducer;

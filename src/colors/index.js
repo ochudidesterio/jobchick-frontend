@@ -21,5 +21,11 @@ export const GlobalStyles = {
     hint: '#9B9B9B',
     edit:'#A7A7A7',
     whiteSmoke:'#F0FAFA',
+    blur:"#CBCBCB",
+    premium:"#DBEEF4",
+    adminPrem:"#F2DAE8",
+    faintGold:"#FFEEB4",
+    gold:"#FFB301",
+    userBg:"#F8F8F8",
   },
 };

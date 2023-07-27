@@ -1,4 +1,13 @@
-import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Button,
+  Text,
+} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import CircularImageView from '../components/CircularImageView';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -12,11 +21,14 @@ import api from '../api/api';
 import {useDispatch} from 'react-redux';
 import {updateUser} from '../store/slices/authSlice';
 import getLanguageObject from '../util/LanguageUtil';
+import Icon from 'react-native-vector-icons/Ionicons';
+import CustomDropDown from '../components/CustomDropDown';
+import CustomLocationDropDown from '../components/CustomLocationDropDown';
 
 const EditProfileScreen = ({navigation}) => {
   const user = useSelector(state => state.auth.user);
-  const language =useSelector(state=>state.auth.language)
-  const util = getLanguageObject(language)
+  const language = useSelector(state => state.auth.language);
+  const util = getLanguageObject(language);
   const dispatch = useDispatch();
   const [uri, setUri] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
@@ -27,8 +39,24 @@ const EditProfileScreen = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber);
   const [proffession, setProffession] = useState(user.proffession);
   const [authUsername, setAuthUserName] = useState(user.authUsername);
+  const [bio,setBio] = useState(user.bio)
   const [age, setAge] = useState(user.age);
   const [isLoading, setIsLoading] = useState(false);
+  const [regions,setRegions] = useState([])
+  const [selectedItem, setSelectedItem] = useState(user.education);
+  const [locationItem,setLocationItem] = useState(user.location)
+  const getRegions = async ()=>{
+    try {
+      const response = await api.get(`/region/all`)
+      setRegions(response.data)
+      setLocationItem(response.data[0].name)
+    } catch (error) {
+      
+    }
+  }
+  useEffect(()=>{
+    getRegions()
+  },[])
   const userData = {
     firstName: '',
     lastName: '',
@@ -38,6 +66,11 @@ const EditProfileScreen = ({navigation}) => {
     authUsername: '',
     profileImage: '',
     age,
+    education: '',
+    skills: [],
+    languages: [],
+    bio:'',
+    location:'',
   };
   function generateRandomNumber() {
     return Math.floor(Math.random() * 1000000);
@@ -81,7 +114,6 @@ const EditProfileScreen = ({navigation}) => {
 
   const handleUpload = async () => {
     try {
-      
       const randomNumber = generateRandomNumber();
 
       const response = await fetch(imageUrl);
@@ -103,16 +135,31 @@ const EditProfileScreen = ({navigation}) => {
       console.log('Upload successful');
     } catch (error) {
       console.log('Error uploading image:', error);
-    }finally{
-
+    } finally {
     }
   };
   useEffect(() => {
     setProfileImage(uri);
+    if (user.skills.length > 0) {
+      setSkills(
+        user.skills.map((name, index) => ({id: index + 1, value: name})),
+      );
+    }
+
+    if (user.languages.length > 0) {
+      setLanguages(
+        user.languages.map((name, index) => ({id: index + 1, value: name})),
+      );
+    }
     console.log('EffectUri', profileImage);
   }, [uri]);
 
   const handleSubmit = async () => {
+    // console.log("item",selectedItem)
+    const skillValues = skills.map(skill => skill.value);
+    const languageValues = languages.map(language => language.value);
+    // console.log("Skills",skillValues)
+    // console.log("Languages",languageValues)
 
     userData.authUsername = authUsername;
     userData.firstName = firstName;
@@ -122,9 +169,18 @@ const EditProfileScreen = ({navigation}) => {
     userData.proffession = proffession;
     userData.profileImage = profileImage;
     userData.age = age;
+    userData.education = selectedItem;
+    userData.skills = skillValues;
+    userData.languages = languageValues;
+    userData.bio = bio;
+    userData.location = locationItem;
+
+
+   // console.log("User",userData)
+
     try {
       setIsLoading(true);
-      const res = await api.put(`/user/update/${user.id}`, userData);
+      const res = await api.post(`/user/update/${user.id}`, userData);
 
       if (res.data.message === 'Successful') {
         dispatch(updateUser(res.data));
@@ -132,10 +188,43 @@ const EditProfileScreen = ({navigation}) => {
       }
     } catch (error) {
       console.log('Update Error', error);
-    }finally{
-      setIsLoading(false)
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  //SKills
+
+  const [skills, setSkills] = useState([{id: 1, value: ''}]);
+  const handleSkillChange = (index, text) => {
+    const updatedSkills = [...skills];
+    updatedSkills[index].value = text;
+    setSkills(updatedSkills);
+  };
+  const addSkill = () => {
+    if (skills.length < 3) {
+      const newSkill = {id: skills.length + 1, value: ''};
+      setSkills([...skills, newSkill]);
+    }
+  };
+
+  //Languages
+
+  const [languages, setLanguages] = useState([{id: 1, value: ''}]);
+  const handleLanguageChange = (index, text) => {
+    const updatedLanguages = [...languages];
+    updatedLanguages[index].value = text;
+    setLanguages(updatedLanguages);
+  };
+  const addLanguage = () => {
+    if (languages.length < 3) {
+      const newLanguage = {id: languages.length + 1, value: ''};
+      setLanguages([...languages, newLanguage]);
+    }
+  };
+
+
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.holder}>
@@ -156,15 +245,16 @@ const EditProfileScreen = ({navigation}) => {
       </View>
       <View style={styles.detailsContainer}>
         <View style={styles.editContainer}>
-          <CustomEditInput
-            placeholder={util.lastName}
-            value={lastName}
-            onChangeText={setLastName}
-          />
+         
           <CustomEditInput
             placeholder={util.firstName}
             value={firstName}
             onChangeText={setFirstName}
+          />
+           <CustomEditInput
+            placeholder={util.lastName}
+            value={lastName}
+            onChangeText={setLastName}
           />
         </View>
         <View style={styles.editContainer}>
@@ -195,17 +285,97 @@ const EditProfileScreen = ({navigation}) => {
         </View>
         <View style={styles.editContainer}>
           <CustomEditInput
+            placeholder="Bio"
+            value={bio}
+            onChangeText={setBio}
+          />
+        </View>
+        <View style={styles.dropdownWrapper}>
+          <CustomLocationDropDown
+            options={
+              regions.map(region => region.name)
+            }
+            defaultValue={locationItem}
+            onSelect={value => setLocationItem(value)}
+          />
+        </View>
+        <View style={styles.editContainer}>
+          <CustomEditInput
             placeholder={util.proffesion}
             value={proffession}
             onChangeText={setProffession}
           />
         </View>
+
+        <View style={styles.dropdownWrapper}>
+          <CustomDropDown
+            options={[
+              'Elementary Education',
+              'Secondary Education',
+              'Bachelors Degree',
+              'Masters Degree',
+            ]}
+            defaultValue={selectedItem}
+            onSelect={value => setSelectedItem(value)}
+          />
+        </View>
+        
+
         <View>
-        {isLoading && (
-          <View style={styles.activityIndicatorContainer}>
-            <ActivityIndicator size="large" color={GlobalStyles.colors.colorPrimaryLight} />
-          </View>
-        )}
+          {languages.map((language, index) => (
+            <View style={styles.editContainer} key={language.id}>
+              <CustomEditInput
+                placeholder={`Language ${index + 1}`}
+                value={language.value}
+                onChangeText={text => handleLanguageChange(index, text)}
+              />
+              {index === languages.length - 1 && languages.length < 3 && (
+                <TouchableOpacity style={styles.test} onPress={addLanguage}>
+                  {/* You can customize the "plus" icon here */}
+                  <Icon
+                    name="add"
+                    size={20}
+                    color={GlobalStyles.colors.white}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+          ))}
+        </View>
+
+        <View>
+          {skills.map((skill, index) => (
+            <View style={styles.editContainer} key={skill.id}>
+              <CustomEditInput
+                placeholder={`Skill ${index + 1}`}
+                value={skill.value}
+                onChangeText={text => handleSkillChange(index, text)}
+              />
+              {index === skills.length - 1 && skills.length < 3 && (
+                <TouchableOpacity style={styles.test} onPress={addSkill}>
+                  {/* You can customize the "plus" icon here */}
+                  <Icon
+                    name="add"
+                    size={20}
+                    color={GlobalStyles.colors.white}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+          ))}
+        </View>
+
+        {/* <Button title="Save" onPress={handleSave} /> */}
+
+        <View>
+          {isLoading && (
+            <View style={styles.activityIndicatorContainer}>
+              <ActivityIndicator
+                size="large"
+                color={GlobalStyles.colors.colorPrimaryLight}
+              />
+            </View>
+          )}
         </View>
 
         <View style={styles.editContainer}>
@@ -222,10 +392,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 3,
     paddingBottom: 20,
-    backgroundColor:GlobalStyles.colors.white
+    backgroundColor: GlobalStyles.colors.white,
   },
   holder: {
     height: 200,
+  },
+  test: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: GlobalStyles.colors.colorPrimaryDark,
+    height: 30,
+    width: 30,
+    marginTop: 35,
+    borderRadius: 5,
+  },
+  txt: {
+    color: GlobalStyles.colors.txtColor,
   },
   imageContainer: {
     width: '100%',
@@ -256,5 +438,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     zIndex: 9999,
+  },
+  dropdownWrapper: {
+    marginHorizontal: 25,
+    marginBottom: 10,
+
+    alignSelf: 'stretch',
   },
 });
