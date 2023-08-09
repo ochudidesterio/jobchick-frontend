@@ -1,39 +1,28 @@
 # JobChick
-This is a cross platform mobile application that can be used by job seekers(app user) and job posters(company admins) to interact with each other. It provides the app user with swipable UIs to view jobs from different job posters.
+This is a cross-platform mobile application that can be used by job seekers (app users) and job posters (company admins) to interact with each other. It provides the app user with swipable UIs to view jobs from different job posters.
 
 # Project Flow and Images.
-   ## Splash Screen    
-![splash](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/640408e7-588e-4a54-90cd-09878b5b51f2)
 
-  ## Home Screen
-![jobs](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/6cab29ac-c7cf-4ea3-ac7a-a298272fce18)
+## Splash Screen    
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/531a2bd5-dd3b-49d5-88cd-6069b6d1d74a" alt="splash" width="350" height="600">
 
-  ## Favourites Screen(List of jobs that the app user liked)
-  
-![listjobs](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/21440c56-3e0b-4513-b52f-0facd12adeea)
-- From the above screen, each card can be swiped left or right to view the job description or to remove it from the favorites list as shown in the images below:
-  
-![swipeleft](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/5942a198-3d92-48a5-a67b-39f553111288)
+## Home Screen
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/4bdd5dca-2509-401c-8019-17af4c1eecc6" alt="jobs" width="350" height="600">
+
+## Favourites Screen (List of jobs that the app user liked)
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/16e1d8f2-a8d5-4b86-9c18-4443f68712f6" alt="listjobs" width="350" height="600">
 
 
-![swiperight](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/e3d9b092-1ea3-4d2b-b91a-2985c1e60d62)
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/993fea5f-b0ed-4217-9efc-e15e202dda52" alt="swipeleft" width="350" height="600">
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/be1f76ff-d736-4f3c-9dc3-baa79bcad1a6" alt="swiperight" width="350" height="600">
 
 ## Job Description Screen
-![jobdescription](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/0754c22e-2306-4634-9e99-2d25e894418b)
-
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/c5d26d67-eddc-420b-960b-cbb5ccfe8de9" alt="jobdescription" width="350" height="600">
 
 ## Profile Screens
-
-![profileA](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/d8df34cb-c89d-4855-ba8c-ad92a5afaa84)
-
-![profileB](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/f0403898-b033-4104-8142-de25778e5ed8)
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/c392ed48-61d3-4d50-be78-dd5448071946" alt="profileA" width="350" height="600">
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/05269f32-7e69-4426-8baf-0551e0676ac9" alt="profileB" width="350" height="600">
 
 ## Settings Screen
-
-![settingA](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/77f4e7f3-3401-4e78-8e0f-26b899b47e42)
-![settigsB](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/dda92071-1be8-4519-9299-ef685af54cf9)
-
-
-
-
-
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/c40e14d4-188e-42b7-95bf-673ab5eed705" alt="settingA" width="350" height="600">
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/9f5076b8-89f1-4d0f-9d84-d1f15cdf47b3" alt="settingsB" width="350" height="600">
