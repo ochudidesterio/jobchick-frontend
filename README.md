@@ -15,7 +15,12 @@ This is a cross platform mobile application that can be used by job seekers(app 
   
 ![swipeleft](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/5942a198-3d92-48a5-a67b-39f553111288)
 
+
 ![swiperight](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/e3d9b092-1ea3-4d2b-b91a-2985c1e60d62)
+
+## Job Description Screen
+![jobdescription](https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/0754c22e-2306-4634-9e99-2d25e894418b)
+
 
 ## Profile Screens
 
