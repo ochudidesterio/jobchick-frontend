@@ -41,7 +41,7 @@ npm-debug.log
 yarn-error.log
 
 #api
-src/api/
+src/api/api.js
 .env
 
 # fastlane
