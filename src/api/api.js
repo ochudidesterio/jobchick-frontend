@@ -32,9 +32,14 @@ const setAuthorizationHeader = async () => {
 //   }
 // );
 setAuthorizationHeader()
+
+const getBaseUrl = () => {
+  // Choose the appropriate base URL based on the environment
+  return 'http://192.168.0.104/jobchick' //local
+  //return process.env.PROD_BASE_URL //production
+};
 const api = axios.create({
-  //baseURL: 'http://192.168.0.103/jobchick',//local
-   baseURL:  'http://172.105.51.141/jobchick',//production
+  baseURL: getBaseUrl()
 });
 
 export default api;

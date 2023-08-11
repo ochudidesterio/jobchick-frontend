@@ -14,12 +14,13 @@ import { likeJob, setMatchingIds } from '../store/slices/authSlice';
 const DetailsScreen = ({route}) => {
   const [roles, setRoles] = useState([]);
   const [qualifications, setQualifications] = useState([]);
-  const {data} = route.params;
+  const {data,param} = route.params;
   const language = useSelector(state=>state.auth.language)
   const util=getLanguageObject(language)
   const user = useSelector(state=>state.auth.user)
   const dispatch = useDispatch()
   const navigation = useNavigation()
+
 
   const likeJobData = {
     jobId: '',
@@ -51,16 +52,27 @@ const DetailsScreen = ({route}) => {
     }
   };
   const like = async () => {
-    dispatch(likeJob(data));
    try {
-     likeJobData.jobId = data.id;
-     likeJobData.userId = user.id;
-     likeJobData.companyId = data.company.id;
-     await api.post('/job/like', likeJobData);
-     const res =await api.get(`/likes/user/${user.id}`)
-     dispatch(setMatchingIds(res.data))
+     if(user.role === "USER"){
+      dispatch(likeJob(data));
+      likeJobData.jobId = data.id;
+      likeJobData.userId = user.id;
+      likeJobData.companyId = data.company.id;
+      await api.post('/job/like', likeJobData);
+      const res =await api.get(`/likes/user/${user.id}`)
+      dispatch(setMatchingIds(res.data))
+     }else{
+      if(param !== undefined){
+        let userParam = param
+        navigation.navigate("likedJobs",{userParam})
+
+      }
+     }
+
+     
+     
    } catch (error) {
-     console.log('LikeJobError', error);
+     console.log('Error', error);
    }
  };
   const back = async ()=>{

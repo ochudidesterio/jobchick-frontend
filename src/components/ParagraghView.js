@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { GlobalStyles } from '../colors';
+import { useSelector } from 'react-redux';
 
 const ParagraghView = ({ paragraph }) => {
+  const user = useSelector(state=>state.auth.user)
   return (
     <View>
-      <Text style={styles.description} numberOfLines={4}>
+      <Text style={styles.description} numberOfLines={user && user.role=== "ADMIN" ? 3 : 4}>
         {paragraph}
       </Text>
     </View>

@@ -3,9 +3,12 @@ import { TouchableOpacity,  StyleSheet,View } from 'react-native';
 import { GlobalStyles } from '../colors';
 import Ent from 'react-native-vector-icons/Entypo';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useSelector } from 'react-redux';
 
 
 const DetailScreenActions = ({ nope, like, isTrue }) => {
+  const user = useSelector(state => state.auth.user);
+
   return (
    <View style={styles.conatiner}>
     <TouchableOpacity
@@ -20,7 +23,7 @@ const DetailScreenActions = ({ nope, like, isTrue }) => {
           onPress={like}
           style={[styles.button, {backgroundColor: GlobalStyles.colors.green}]}>
           <View style={[styles.holder, {width: 35, height: 35}]}>
-            <Icon name="heart" size={30} color={isTrue ? GlobalStyles.colors.red :GlobalStyles.colors.white} />
+            <Icon name={user.role === "USER" ? "heart" : "briefcase"} size={30} color={GlobalStyles.colors.white} />
           </View>
         </TouchableOpacity>
    </View>

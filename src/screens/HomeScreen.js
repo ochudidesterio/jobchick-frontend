@@ -473,7 +473,6 @@ const styles = StyleSheet.create({
   },
   swiperContainer: {
     width: '100%',
-    height: '80%',
   },
   adminCard: {
     backgroundColor: GlobalStyles.colors.white,

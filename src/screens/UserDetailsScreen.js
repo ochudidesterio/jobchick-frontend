@@ -10,16 +10,17 @@ const UserDetailsScreen = ({route}) => {
     const navigation = useNavigation()
     const company = useSelector(state=>state.auth.company)
     const matchingIds = useSelector(state=>state.auth.matchingIds)
-    console.log ("Ids",matchingIds)
-  const {user} = route.params;
+  const {userParam} = route.params;
+  let user = userParam
 
   const back = async ()=>{
     navigation.navigate('Home')
   }
-  const adminLikeBack = async ()=>{
+  const viewLikedJobs = async ()=>{
     try {
-      const response  = await api.post(`/likes/admin/like/${user.id}/${company.id}`)
-      console.log("Res",response.data)
+      // const response  = await api.post(`/likes/admin/like/${user.id}/${company.id}`)
+      // console.log("Res",response.data)
+      navigation.navigate("likedJobs",{userParam})
     } catch (error) {
       
     }
@@ -95,7 +96,7 @@ const UserDetailsScreen = ({route}) => {
           <Text style={styles.txtBio}>{user.phoneNumber}</Text>
         </View>
         <View style={styles.other}>
-            <DetailScreenActions like={adminLikeBack} isTrue={isTrue} nope={back} />
+            <DetailScreenActions like={viewLikedJobs} isTrue={isTrue} nope={back} />
         </View>
       </View>
     </ScrollView>

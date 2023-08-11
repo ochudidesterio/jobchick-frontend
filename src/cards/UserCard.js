@@ -8,7 +8,8 @@ import { useNavigation } from '@react-navigation/native';
 const UserCard = ({user}) => {
     const navigation = useNavigation()
     const showUserDetails =()=>{
-        navigation.navigate("UserDetails",{user})
+      let userParam = user
+        navigation.navigate("UserDetails",{userParam})
     }
   return (
     <View style={styles.container}>
@@ -75,8 +76,11 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     elevation: 10,
     width: '100%',
-    //height: '90%',
+    //height: '70%',
     padding: 20,
+    //flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   txt: {
     color: GlobalStyles.colors.txtColor,
@@ -104,7 +108,7 @@ const styles = StyleSheet.create({
     width: '100%', // Updated width to "100%"
   },
   stackContainer: {
-    height: '60%',
+    height: '50%',
     width: '100%',
   },
   imgContainer: {
@@ -131,6 +135,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
+    width:"100%"
+  },
+  skillContainer:{
+    width:"100%"
   },
   location: {
     flexDirection: 'row',
