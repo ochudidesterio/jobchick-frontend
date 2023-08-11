@@ -3,26 +3,24 @@ This is a cross-platform mobile application that can be used by job seekers (app
 
 # Project Flow and Images.
 
-## Splash Screen    
-<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/531a2bd5-dd3b-49d5-88cd-6069b6d1d74a" alt="splash" width="350" height="600">
+## Splash Screen   
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/5113a3fd-e0b9-42c8-9e2f-64f8df2a2394" alt="splasht" width="350" height="600">
 
 ## Home Screen
-<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/4bdd5dca-2509-401c-8019-17af4c1eecc6" alt="jobs" width="350" height="600">
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/11c1429c-a452-4a06-8ab4-9d5807984c31" alt="jobs" width="350" height="600">
 
 ## Favourites Screen (List of jobs that the app user liked)
-<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/16e1d8f2-a8d5-4b86-9c18-4443f68712f6" alt="listjobs" width="350" height="600">
-
-
-<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/993fea5f-b0ed-4217-9efc-e15e202dda52" alt="swipeleft" width="350" height="600">
-<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/be1f76ff-d736-4f3c-9dc3-baa79bcad1a6" alt="swiperight" width="350" height="600">
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/176d1c5e-0540-4c4a-af40-076de74601b3" alt="listjobs" width="350" height="600">
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/91bf32f9-4ece-4c02-9ead-ffa66cbf3538" alt="swipeleft" width="350" height="600">
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/5644689b-d597-468a-848f-a4f35e979fc1" alt="swiperight" width="350" height="600">
 
 ## Job Description Screen
-<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/c5d26d67-eddc-420b-960b-cbb5ccfe8de9" alt="jobdescription" width="350" height="600">
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/ca60e634-6f36-4f46-bd77-c59a947b1b25" alt="jobdescription" width="350" height="600">
 
 ## Profile Screens
-<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/c392ed48-61d3-4d50-be78-dd5448071946" alt="profileA" width="350" height="600">
-<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/05269f32-7e69-4426-8baf-0551e0676ac9" alt="profileB" width="350" height="600">
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/8c3b1e0a-b7a3-4121-b2f6-1ad5a9caa57e" alt="profileA" width="350" height="600">
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/d2f80ef2-9a9d-4829-9ca6-61707f841bba" alt="profileB" width="350" height="600">
 
 ## Settings Screen
-<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/c40e14d4-188e-42b7-95bf-673ab5eed705" alt="settingA" width="350" height="600">
-<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/9f5076b8-89f1-4d0f-9d84-d1f15cdf47b3" alt="settingsB" width="350" height="600">
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/8b8aecf1-5cc9-42b1-94b9-a13960211fc2" alt="settingA" width="350" height="600">
+<img src="https://github.com/ochudidesterio/jobchick-frontend/assets/45032910/3d4efc49-3485-4c10-81bd-92d2b5157d9c" alt="settingsB" width="350" height="600">
