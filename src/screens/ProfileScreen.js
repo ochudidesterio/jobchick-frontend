@@ -89,7 +89,7 @@ const ProfileScreen = ({navigation}) => {
       </View>
       <View style={styles.details}>
         <View style={styles.nameContainer}>
-          <Text style={styles.nameLeft}>
+          <Text style={styles.nameLeft}> 
             ({user.age == null ? 0 : user.age})
           </Text>
           <Text style={styles.name}>
@@ -261,6 +261,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontFamily: 'ExtraBold',
+    marginLeft:3,
   },
   details: {
     flex: 2,
@@ -311,7 +312,8 @@ const styles = StyleSheet.create({
 
   },
   bioContainer:{
-    marginHorizontal:20
+    marginHorizontal:20,
+    marginVertical:10
   },
   iconContainer: {
     height: 28,

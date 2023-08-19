@@ -14,7 +14,7 @@ const SplashScreen = ({navigation}) => {
   const loggedIn = useSelector(state => state.auth.loggedIn);
   const colors = [GlobalStyles.colors.colorPrimaryDark,  GlobalStyles.colors.colorPrimaryLight];
   const { width, height } = Dimensions.get('window');
-  useEffect(()=>{dispatch(setLanguage("he"))})
+  useEffect(()=>{dispatch(setLanguage("en"))})
   useEffect(() => {
     const timer = setTimeout(() => {
       {

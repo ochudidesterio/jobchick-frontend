@@ -4,6 +4,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Text,
+  RefreshControl
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import React, {useEffect, useState} from 'react';
@@ -31,6 +32,17 @@ const SettingsScreen = ({navigation}) => {
   const [checkedJobTypes, setCheckedJobTypes] = useState([]);
   const [distance, setDistanceValue] = useState(0);
   const [age, setAgeValue] = useState(0);
+  const [premium,setPremium] = useState([])
+  const [refreshing, setRefreshing] = useState(false);
+
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    // Fetch your data here
+    getPremium(); // For example, fetching premium data
+    setRefreshing(false); // After fetching data, turn off refreshing
+  };
+
 
   useEffect(() => {
     api
@@ -87,8 +99,23 @@ const SettingsScreen = ({navigation}) => {
     );
   };
 
+    const getPremium = async()=>{
+        try {
+           const res = await api.get("/premium/get/all")
+           setPremium(res.data)
+        } catch (error) {
+            
+        }
+    }
+    useEffect(()=>{
+        getPremium()
+    },[])
+
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}
+    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh}/>} 
+    >
       <View style={styles.language}>
         <SwitchButton />
       </View>
@@ -142,7 +169,7 @@ const SettingsScreen = ({navigation}) => {
           <Text style={styles.saveButtonText}>SAVE</Text>
         </TouchableOpacity>
       </View>
-      <PremiumView
+      <PremiumView premium={premium}
         color={
           user.role === 'USER'
             ? GlobalStyles.colors.premium

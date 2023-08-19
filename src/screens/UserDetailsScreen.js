@@ -18,12 +18,20 @@ const UserDetailsScreen = ({route}) => {
   }
   const viewLikedJobs = async ()=>{
     try {
-      // const response  = await api.post(`/likes/admin/like/${user.id}/${company.id}`)
-      // console.log("Res",response.data)
+    
       navigation.navigate("likedJobs",{userParam})
     } catch (error) {
       
     }
+  }
+  const adminLikeUser =async()=>{
+try {
+  await api.post(
+    `/companylikes/create/${company.id}/${user.id}`
+  );
+} catch (error) {
+  
+}
   }
   let isTrue = false;
   for (const item of matchingIds) {
@@ -96,7 +104,7 @@ const UserDetailsScreen = ({route}) => {
           <Text style={styles.txtBio}>{user.phoneNumber}</Text>
         </View>
         <View style={styles.other}>
-            <DetailScreenActions like={viewLikedJobs} isTrue={isTrue} nope={back} />
+            <DetailScreenActions jobs={viewLikedJobs} like={adminLikeUser} isTrue={isTrue} nope={back} />
         </View>
       </View>
     </ScrollView>
@@ -125,6 +133,7 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colors.txtColor,
     marginVertical: 2,
     fontFamily: 'Light',
+    textAlign:"left"
   },
   username: {
     color: GlobalStyles.colors.txtColor,

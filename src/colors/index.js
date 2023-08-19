@@ -27,5 +27,6 @@ export const GlobalStyles = {
     faintGold:"#FFEEB4",
     gold:"#FFB301",
     userBg:"#F8F8F8",
+    tabIconColor:"#005367",
   },
 };

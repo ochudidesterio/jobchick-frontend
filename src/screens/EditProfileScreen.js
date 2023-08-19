@@ -25,6 +25,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import CustomDropDown from '../components/CustomDropDown';
 import CustomLocationDropDown from '../components/CustomLocationDropDown';
 
+
 const EditProfileScreen = ({navigation}) => {
   const user = useSelector(state => state.auth.user);
   const language = useSelector(state => state.auth.language);
@@ -45,6 +46,10 @@ const EditProfileScreen = ({navigation}) => {
   const [regions,setRegions] = useState([])
   const [selectedItem, setSelectedItem] = useState(user.education);
   const [locationItem,setLocationItem] = useState(user.location)
+
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
+
+
   const getRegions = async ()=>{
     try {
       const response = await api.get(`/region/all`)
@@ -246,15 +251,23 @@ const EditProfileScreen = ({navigation}) => {
       <View style={styles.detailsContainer}>
         <View style={styles.editContainer}>
          
-          <CustomEditInput
-            placeholder={util.firstName}
-            value={firstName}
-            onChangeText={setFirstName}
-          />
+        
            <CustomEditInput
             placeholder={util.lastName}
             value={lastName}
             onChangeText={setLastName}
+            isMultline={false}
+            icon ="person-circle-outline"
+            inputHolder="last name"
+          />
+            <CustomEditInput
+            placeholder={util.firstName}
+            value={firstName}
+            onChangeText={setFirstName}
+            isMultline={false}
+            icon ="person-circle-outline"
+            inputHolder="first name"
+
           />
         </View>
         <View style={styles.editContainer}>
@@ -262,11 +275,19 @@ const EditProfileScreen = ({navigation}) => {
             placeholder={util.username}
             value={authUsername}
             onChangeText={setAuthUserName}
+            isMultline={false}
+            icon ="person"
+            inputHolder="username"
+
           />
           <CustomEditInput
             placeholder={util.gender}
             value={gender}
             onChangeText={setGender}
+            isMultline={false}
+            inputHolder="gender"
+            icon="people"
+
           />
         </View>
         <View style={styles.editContainer}>
@@ -275,12 +296,22 @@ const EditProfileScreen = ({navigation}) => {
             value={age}
             onChangeText={setAge}
             keyboard="numeric"
+            isMultline={false}
+            icon="calendar"
+            inputHolder="age"
+
+
           />
           <CustomEditInput
             placeholder={util.phonenumber}
             value={phoneNumber}
             onChangeText={setPhoneNumber}
             keyboard="numeric"
+            isMultline={false}
+            icon="call"
+            inputHolder="telephone"
+
+
           />
         </View>
         <View style={styles.editContainer}>
@@ -288,6 +319,10 @@ const EditProfileScreen = ({navigation}) => {
             placeholder="Bio"
             value={bio}
             onChangeText={setBio}
+            isMultline={true}
+            inputHolder="biography"
+
+
           />
         </View>
         <View style={styles.dropdownWrapper}>
@@ -304,6 +339,10 @@ const EditProfileScreen = ({navigation}) => {
             placeholder={util.proffesion}
             value={proffession}
             onChangeText={setProffession}
+            isMultline={false}
+            icon="briefcase"
+            inputHolder="proffession"
+
           />
         </View>
 
@@ -320,6 +359,22 @@ const EditProfileScreen = ({navigation}) => {
           />
         </View>
         
+        {/* <SafeAreaView>
+          <View style={styles.dropdownWrapper}>
+        <DropdownMultiselectView
+          data={[
+            { key: 'English', value: 'English' },
+            { key: 'Kiswahili', value: 'Kiswahili' },
+            { key: 'Hebrew', value: 'Hebrew' },
+            // Add more languages as needed
+          ]}
+          displayKey="value"
+          displayValue="key"
+          selectedItem={selectedLanguages}
+          setSelectedItem={setSelectedLanguages}
+        />
+      </View>
+        </SafeAreaView> */}
 
         <View>
           {languages.map((language, index) => (
@@ -328,6 +383,9 @@ const EditProfileScreen = ({navigation}) => {
                 placeholder={`Language ${index + 1}`}
                 value={language.value}
                 onChangeText={text => handleLanguageChange(index, text)}
+                isMultline={false}
+                icon="language"
+
               />
               {index === languages.length - 1 && languages.length < 3 && (
                 <TouchableOpacity style={styles.test} onPress={addLanguage}>
@@ -350,6 +408,9 @@ const EditProfileScreen = ({navigation}) => {
                 placeholder={`Skill ${index + 1}`}
                 value={skill.value}
                 onChangeText={text => handleSkillChange(index, text)}
+                isMultline={false}
+                icon="checkmark-done-sharp"
+
               />
               {index === skills.length - 1 && skills.length < 3 && (
                 <TouchableOpacity style={styles.test} onPress={addSkill}>

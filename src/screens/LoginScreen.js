@@ -74,6 +74,9 @@ const LoginScreen = () => {
   const handleSignUp = () => {
     navigation.navigate('authStack', {screen: 'Register'});
   };
+  const handleForgotPassword=()=>{
+    navigation.navigate('authStack',{screen:"Email"})
+  }
 
   return (
     <View style={styles.container}>
@@ -117,7 +120,7 @@ const LoginScreen = () => {
 
         <CustomButton title={util.login} onPress={handleLogin} />
         <View style={styles.signUpContainer}>
-          <Text style={styles.forgot}>{util.forgotPassword}</Text>
+          <Text onPress={handleForgotPassword} style={styles.forgot}>{util.forgotPassword}</Text>
           <Text onPress={handleSignUp} style={styles.forgot}>
             {util.signUp}
           </Text>

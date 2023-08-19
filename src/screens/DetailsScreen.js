@@ -51,6 +51,19 @@ const DetailsScreen = ({route}) => {
       console.log('FetchQualificationError', error);
     }
   };
+
+  const viewLikedJobs = async ()=>{
+    try {
+    
+      if(param !== undefined){
+        let userParam = param
+        navigation.navigate("likedJobs",{userParam})
+
+      }
+    } catch (error) {
+      
+    }
+  }
   const like = async () => {
    try {
      if(user.role === "USER"){
@@ -113,7 +126,7 @@ const DetailsScreen = ({route}) => {
         <JobRolesList roles={roles} />
         <QualificationList qualifications={qualifications} />
         <View style={styles.applyContainer}>
-          <DetailScreenActions  like={like} nope={back}  />
+          <DetailScreenActions  like={like} nope={back} jobs={viewLikedJobs}  />
         </View>
       </View>
     </ScrollView>

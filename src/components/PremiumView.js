@@ -1,10 +1,12 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import { GlobalStyles } from '../colors'
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
-const PremiumView = ({color}) => {
+const PremiumView = ({color,premium}) => {
+
+    
   return (
     <View style={[styles.container,{backgroundColor:color}]}>
       <TouchableOpacity style={styles.innerContainer}>
@@ -16,7 +18,7 @@ const PremiumView = ({color}) => {
         </View>
         <View style={styles.premiumRight}>
             <Text style={styles.txtPrem}>GET A PREMIUM</Text>
-            <Text style={styles.price}>10$ per month</Text>
+            {premium.length > 0 && <Text style={styles.price}>{premium[0].price} per month</Text>}
         </View>
       </TouchableOpacity>
     </View>

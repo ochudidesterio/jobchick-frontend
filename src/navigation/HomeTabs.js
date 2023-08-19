@@ -16,7 +16,7 @@ const HomeTabs = () => {
     <Tab.Navigator
       screenOptions={({route}) => ({
         tabBarActiveTintColor: GlobalStyles.colors.white,
-        tabBarInactiveTintColor: GlobalStyles.colors.avatar,
+        tabBarInactiveTintColor: GlobalStyles.colors.tabIconColor,
         tabBarShowLabel: false,
         tabBarBackground: () => (
           <LinearGradient

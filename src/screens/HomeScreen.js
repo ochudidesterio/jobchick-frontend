@@ -37,7 +37,6 @@ import {
   setUsers,
 } from '../store/slices/authSlice';
 
-import Swiper from 'react-native-swiper';
 import UserCard from '../cards/UserCard';
 
 const HomeScreen = ({navigation}) => {
@@ -49,12 +48,15 @@ const HomeScreen = ({navigation}) => {
   const [users, setUsers] = useState([]);
   const dispatch = useDispatch();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const[currentUserIndex,setCurrentUserIndex] = useState(0)
   const [nextIndex, setNextIndex] = useState(currentIndex + 1);
+  const [nextUserIndex,setNextUserIndex]=useState(currentUserIndex + 1)
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [userIndex, setUserIndex] = useState(0);
 
   let currentJob;
   let nextJob;
+  let currentUser;
+  let nextUser;
   const getJobs = async () => {
     try {
       const response = await api.get('/job/all/active');
@@ -68,6 +70,7 @@ const HomeScreen = ({navigation}) => {
     try {
       const response = await api.get(`/user/company/${user.companyId}`);
       setUsers(response.data);
+      setIsDataLoaded(true)
     } catch (e) {
       console.log(e);
     }
@@ -104,6 +107,11 @@ const HomeScreen = ({navigation}) => {
   currentJob = jobs[currentIndex];
   nextJob = jobs[nextIndex];
 
+  if(users.length > 0){
+    currentUser = users[currentUserIndex]
+    nextUser = users[nextUserIndex]
+  }
+
   const doMatching = () => {
     if (currentJob) {
       const match = ids.find(
@@ -133,10 +141,14 @@ const HomeScreen = ({navigation}) => {
   }, [currentJob]);
 
   const onSwipeLeft = () => {
-    console.log('JobLeft::', currentJob.title);
+    if(user.role === "USER"){
+      console.log('JobLeft::', currentJob.title);
+    }
   };
   const onSwipeRight = () => {
-    console.log('JobRight::', currentJob.title);
+    if(user.role === "USER"){
+      console.log('JobRight::', currentJob.title);
+    }
   };
 
   const ROTATION = 60;
@@ -203,21 +215,36 @@ const HomeScreen = ({navigation}) => {
         runOnJS(onSwipeLeft)();
       }
 
-      if (currentIndex < jobs.length) {
-        runOnJS(setCurrentIndex)(currentIndex + 1);
+      if(user.role === "USER"){
+        if (currentIndex < jobs.length) {
+          runOnJS(setCurrentIndex)(currentIndex + 1);
+        }
+      }else{
+        if(currentUserIndex < users.length){
+          runOnJS(setCurrentUserIndex)(currentUserIndex + 1)
+        }
       }
     },
   });
   useEffect(() => {
     translateX.value = 0;
-
-    if (currentIndex < jobs.length) {
-      setNextIndex(currentIndex + 1);
-    } else {
-      setCurrentIndex(0);
-      setNextIndex(currentIndex + 1);
+    if(user.role === "USER"){
+      if (currentIndex < jobs.length) {
+        setNextIndex(currentIndex + 1);
+      } else {
+        setCurrentIndex(0);
+        setNextIndex(currentIndex + 1);
+      }
+    }else{
+      if(currentUserIndex < users.length){
+        setNextUserIndex(currentUserIndex + 1)
+      }else{
+        setCurrentUserIndex(0)
+        setNextUserIndex(currentUserIndex + 1)
+      }
     }
-  }, [currentIndex, translateX]);
+  
+  }, [currentIndex, translateX,currentUserIndex]);
 
   const likeJobData = {
     jobId: '',
@@ -238,8 +265,9 @@ const HomeScreen = ({navigation}) => {
         console.log('LikeJobError', error);
       }
     } else {
+      
       const response = await api.post(
-        `/likes/admin/like/${users[userIndex].id}/${company.id}`,
+        `/companylikes/create/${company.id}/${currentUser.id}`
       );
     }
   };
@@ -251,8 +279,10 @@ const HomeScreen = ({navigation}) => {
         runOnJS(setCurrentIndex)(currentIndex + 1);
       }
     } else {
-      if (userIndex < users.length - 1) {
-        setUserIndex(userIndex + 1);
+      if (currentUserIndex< users.length) {
+        translateX.value = withSpring(-hiddenTranslate);
+        runOnJS(onSwipeLeft)();
+        runOnJS(setCurrentUserIndex)(currentUserIndex + 1);
       }
     }
   };
@@ -263,8 +293,9 @@ const HomeScreen = ({navigation}) => {
         translateX.value = withSpring(hiddenTranslate);
       }
     } else {
-      if (userIndex > 0) {
-        setUserIndex(userIndex - 1);
+      if (currentUserIndex > 0) {
+        setCurrentUserIndex(currentUserIndex - 1);
+        translateX.value = withSpring(hiddenTranslate);
       }
     }
   };
@@ -333,22 +364,39 @@ const HomeScreen = ({navigation}) => {
           )}
         </View>
       ) : (
-        <View style={styles.adminContainer}>
-          <Swiper
-            loop={false}
-            index={userIndex}
-            showsButtons={true}
-            showsPagination={false}
-            containerStyle={styles.swiperContainer}
-            onIndexChanged={index => setUserIndex(index)}>
-            {users &&
-              users.map((item, index) => (
-                <Animated.View key={index} style={styles.adminCard}>
-                  <UserCard user={item} />
-                </Animated.View>
-              ))}
-          </Swiper>
+        
+        <>
+         <View style={styles.stackContainer}>
+          {nextUser && (
+            <View style={styles.nextCard}>
+              <Animated.View style={[styles.animatedCard, nextCardStyle]}>
+                {isDataLoaded && <UserCard user={nextUser} />}
+              </Animated.View>
+            </View>
+          )}
+          {currentUser && (
+            <PanGestureHandler onGestureEvent={gestureHandler}>
+              <Animated.View style={[styles.animatedCard, cardStyle]}>
+                {isDataLoaded && (
+                  <>
+                    <Animated.Image
+                      source={Like}
+                      style={[styles.like, {left: 10}, likeStyle]}
+                      resizeMode="contain"
+                    />
+                    <Animated.Image
+                      source={Nope}
+                      style={[styles.like, {right: 10}, nopeStyle]}
+                      resizeMode="contain"
+                    />
+                    <UserCard user={currentUser} />
+                  </>
+                )}
+              </Animated.View>
+            </PanGestureHandler>
+          )}
         </View>
+        </>
       )}
       <View style={styles.icons}>
         <TouchableOpacity

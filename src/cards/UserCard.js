@@ -33,8 +33,8 @@ const UserCard = ({user}) => {
         <View style={styles.name}>
           <Text style={styles.txtName}>
             {user && user.firstName !== null && user.lastName !== null
-              ? user.firstName + ' ' + user.lastName
-              : user.authUsername}
+              ? user.firstName + ' ' + user.lastName+' '
+              : user.authUsername+' '}
           </Text>
           <Text style={styles.txtAge}>
             ({user.age !== null ? user.age : 0})
@@ -134,11 +134,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 25,
     width:"100%"
   },
   skillContainer:{
-    width:"100%"
+    width:"100%",
+    marginBottom:5
   },
   location: {
     flexDirection: 'row',

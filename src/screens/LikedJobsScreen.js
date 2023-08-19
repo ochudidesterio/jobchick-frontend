@@ -6,7 +6,6 @@ import LikeJobItem from '../components/LikeJobItem';
 import {GlobalStyles} from '../colors';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Font from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
 
 
@@ -15,6 +14,7 @@ const LikedJobsScreen = ({route}) => {
     const navigation = useNavigation();
     const company = useSelector(state=>state.auth.company)
     const [jobs,setJobs] = useState([])
+    const[ids,setIds] = useState([])
     const {userParam} = route.params
     let user = userParam
 
@@ -30,13 +30,23 @@ const LikedJobsScreen = ({route}) => {
         }
     }
 
+    const fetchLikeIds = async () => {
+      try {
+        const response = await api.get(`/likes/company/${company.id}`);
+        console.log('comIDS', response.data);
+        setIds(response.data)
+      } catch (error) {}
+    };
+
 useEffect(()=>{
     getLikedJobByUser()
+    fetchLikeIds()
 },[])
 
 const handleRefresh = () => {
   setRefreshing(true);
   getLikedJobByUser()
+  fetchLikeIds()
   setRefreshing(false);
 };
 
@@ -45,24 +55,43 @@ const handleView = item => {
   const param = user
   navigation.navigate('HomeStack', {screen: 'Details', params: {data,param}});
 };
+const handleMatch = async (jobId,value)=>{
+  try {
+    const res = await api.post(`/job/admin/like/${jobId}/${!value}`)
+    handleRefresh()
+  } catch (error) {
+    
+  }
+}
 
 const renderItem = ({item}) => {
 
+  const likedJob = ids.find(
+    job => job.userId === user.id && job.jobId === item.id,
+  );
+
+  const isLikedBack = likedJob && likedJob.likedBack;
+
   return (
     <View style={styles.itemContainer}>
-      <LikeJobItem item={item}/>
+      <LikeJobItem item={item} isGrey={!isLikedBack} />
     </View>
   );
 };
 
 const renderHiddenItem = ({item}) =>{
 
+  const likedJob = ids.find(
+    job => job.userId === user.id && job.jobId === item.id,
+  );
+
+  const isLikedBack = likedJob && likedJob.likedBack;
  
   return( 
   <View style={styles.hiddenItem}>
     <View style={styles.hiddenLeft}>
-      <TouchableOpacity >
-        <Font name= "heart-o" size={35} color={ GlobalStyles.colors.red } />
+      <TouchableOpacity onPress={()=>handleMatch(likedJob.id,isLikedBack)} >
+        <Icon name={ isLikedBack ? "checkmark-done-circle-sharp" : "checkmark-circle-outline"} size={35} color={ GlobalStyles.colors.red } />
       </TouchableOpacity>
     </View>
 
@@ -74,12 +103,34 @@ const renderHiddenItem = ({item}) =>{
   </View>
 )};
 
+
+// Sort jobs based on whether they have been liked back or not
+const sortedJobs = [...jobs].sort((a, b) => {
+  const aLikedJob = ids.find(
+    job => job.userId === user.id && job.jobId === a.id,
+  );
+  const bLikedJob = ids.find(
+    job => job.userId === user.id && job.jobId === b.id,
+  );
+
+  const aIsLikedBack = aLikedJob && aLikedJob.likedBack;
+  const bIsLikedBack = bLikedJob && bLikedJob.likedBack;
+
+  if (aIsLikedBack && !bIsLikedBack) {
+    return -1; // a comes first
+  } else if (!aIsLikedBack && bIsLikedBack) {
+    return 1; // b comes first
+  } else {
+    return 0; // order remains the same
+  }
+});
+
   return (
     <View style={styles.container}>
       {jobs.length > 0 && (
         <SwipeListView
         style={styles.listContainer}
-        data={jobs}
+        data={sortedJobs}
         keyExtractor={item => item.id.toString()}
         renderItem={renderItem}
         renderHiddenItem={renderHiddenItem}

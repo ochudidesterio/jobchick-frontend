@@ -50,7 +50,7 @@ const FavouritesScreen = () => {
   //getUsers who liked company jobs (admin)
   const getCompanyUsers = async ()=>{
     try {
-      const response = await api.get(`/user/company/${company.id}`)
+      const response = await api.get(`/user/company/admin/likes/${company.id}`)
       console.log("Users",response.data)
       setUsers(response.data)
     } catch (error) {
@@ -96,33 +96,26 @@ const FavouritesScreen = () => {
     data = item;
     navigation.navigate('HomeStack', {screen: 'Details', params: {data}});
   };
-  const handleUnLike =item=>{
-
-  }
+  
   const handleViewUser = item =>{
-    let user;
-    user = item;
-    navigation.navigate('HomeStack', {screen: 'UserDetails', params: {user}});
+    let userParam;
+    userParam = item;
+    navigation.navigate('HomeStack', {screen: 'UserDetails', params: {userParam}});
 
   }
   const adminUnlikeUser = async (item)=>{
     try {
-      const response  = await api.post(`/likes/admin/unlike/${item.id}/${company.id}`)
-      console.log("Res",response.data)
+      
+      const response  = await api.delete(`/companylikes/delete/${company.id}/${item.id}`)
+      if(response.data.message === "deleted"){
+        handleRefresh()
+      }
     } catch (error) {
       
     }
   }
 
-  // const renderItem = ({ item }) => {
-  //   const likedJob = ids.find(job => job.userId === user.id && job.jobId === item.id);
-
-  //   return (
-  //     <View style={styles.itemContainer}>
-  //       <LikeJobItem item={item} isGrey={!likedJob || !likedJob.likedBack} />
-  //     </View>
-  //   );
-  // };
+ 
 
   const renderItem = ({item}) => {
     const likedJob = ids.find(
@@ -177,30 +170,28 @@ const FavouritesScreen = () => {
 
   const renderUserItem = ({item}) => {
 
-    const hasLikedBack = ids.some(
-      (job) => job.userId === item.id && job.companyId === company.id && job.likedBack
-    );
+   
 
     return (
       <View style={styles.itemContainer}>
-        <LikeUserItem item={item}isGrey={!hasLikedBack}/>
+        <LikeUserItem item={item}/>
       </View>
     );
   };
 
   const renderHiddenUserItem = ({item}) =>{
 
-    const hasLikedBack = ids.some(
-      (job) => job.userId === item.id && job.companyId === company.id && job.likedBack
-    );
+   
     
     return(
 
     
     <View style={styles.hiddenItem}>
       <View style={styles.hiddenLeft}>
-        <TouchableOpacity onPress={hasLikedBack ? () => adminUnlikeUser(item) : ()=>{}}>
-          <Font name={hasLikedBack ? "heart" : "heart-o"} size={35} color={hasLikedBack ? GlobalStyles.colors.red : GlobalStyles.colors.txtColor} />
+        <TouchableOpacity 
+         onPress={ () => adminUnlikeUser(item) }
+        >
+          <Font name={"trash"} size={35} color={ GlobalStyles.colors.red } />
         </TouchableOpacity>
       </View>
 
