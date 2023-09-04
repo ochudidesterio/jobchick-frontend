@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from 'react';
+
+
 import {
   ScrollView,
   StyleSheet,
@@ -67,6 +69,12 @@ const ProfileScreen = ({navigation}) => {
     };
     getUser();
   }, [user.id]);
+
+
+
+
+
+
   return (
     <ScrollView
       style={styles.container}

@@ -179,7 +179,7 @@ const SettingsScreen = ({navigation}) => {
       {user && user.role === 'USER' && (
         <>
           <View style={styles.showProfile}>
-            <HideProfileSwitch />
+            <HideProfileSwitch id={user.id} />
           </View>
           <View style={styles.line} />
         </>
@@ -247,6 +247,8 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colors.txtColor,
     fontFamily: 'Bold',
     fontSize: 16,
+    textAlign:"left"
+
   },
   distance: {
     marginHorizontal: 20,
@@ -293,7 +295,7 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colors.txtColor,
   },
   valueView: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginHorizontal: 20,

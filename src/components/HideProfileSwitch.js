@@ -4,16 +4,29 @@ import { Switch } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { setHideProfile } from '../store/slices/authSlice';
 import { GlobalStyles } from '../colors';
+import { async } from '@firebase/util';
+import api from '../api/api';
 
-const HideProfileSwitch = () => {
+const HideProfileSwitch = ({id}) => {
   const dispatch = useDispatch();
+ const hideProfile = async ()=>{
+  try {
+    await api.post(`/user/showprofile/${id}`)
+
+  } catch (error) {
+    console.log("Error hiding profile")
+  }
+ }
+  
   const hide = useSelector(state => state.auth.hideProfile);
   const switchValue = !hide; // Use the negation of hide to get the switch value
 
-  const languageText = hide ? 'View Profile' : 'Hide Profile'; // Modify the languageText logic
+  const languageText = hide ? 'Hide Profile' : 'View Profile'; // Modify the languageText logic
 
   const toggleHideProfile = () => {
+    console.log("Profile",hide)
     dispatch(setHideProfile(!hide)); // Toggle the hide profile value
+    hideProfile()
   };
 
   return (

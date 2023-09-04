@@ -5,6 +5,7 @@ import {
   View,
   useWindowDimensions,
   TouchableOpacity,
+  ScrollView, RefreshControl
 } from 'react-native';
 import React, {useEffect, useState, useCallback} from 'react';
 import {GlobalStyles} from '../colors';
@@ -69,7 +70,11 @@ const HomeScreen = ({navigation}) => {
   const getUsers = async () => {
     try {
       const response = await api.get(`/user/company/${user.companyId}`);
-      setUsers(response.data);
+      const activeUsers = response.data.filter(user => user.showProfile === false);
+
+      console.log("Active ",activeUsers)
+
+      setUsers(activeUsers);
       setIsDataLoaded(true)
     } catch (e) {
       console.log(e);
@@ -251,6 +256,19 @@ const HomeScreen = ({navigation}) => {
     userId: '',
     companyId: '',
   };
+  const chat = () =>{
+    let id;
+    let name;
+    if(user.role === "USER"){
+       id = currentJob.company.adminId
+       name = currentJob.company.name
+    }else{
+      id = currentUser.id
+      name = currentUser.firstName+" "+currentUser.lastName
+    }
+    navigation.navigate("chats",{user:user,id:id,name:name})
+
+  }
   const like = async () => {
     if (user.role === 'USER') {
       dispatch(likeJob(currentJob));
@@ -261,6 +279,11 @@ const HomeScreen = ({navigation}) => {
         await api.post('/job/like', likeJobData);
         const res = await api.get(`/likes/user/${user.id}`);
         dispatch(setMatchingIds(res.data));
+        if (currentIndex < jobs.length) {
+          translateX.value = withSpring(-hiddenTranslate);
+          runOnJS(onSwipeLeft)();
+          runOnJS(setCurrentIndex)(currentIndex + 1);
+        }
       } catch (error) {
         console.log('LikeJobError', error);
       }
@@ -331,7 +354,7 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
   return (
-    <GestureHandlerRootView style={styles.container}>
+<GestureHandlerRootView style={styles.container}>
       {user && user.role === 'USER' ? (
         <View style={styles.stackContainer}>
           {nextJob && (
@@ -374,7 +397,7 @@ const HomeScreen = ({navigation}) => {
               </Animated.View>
             </View>
           )}
-          {currentUser && (
+          {currentUser &&  (
             <PanGestureHandler onGestureEvent={gestureHandler}>
               <Animated.View style={[styles.animatedCard, cardStyle]}>
                 {isDataLoaded && (
@@ -429,6 +452,7 @@ const HomeScreen = ({navigation}) => {
           </View>
         </TouchableOpacity>
         <TouchableOpacity
+        onPress={chat}
           style={[
             styles.button,
             {backgroundColor: GlobalStyles.colors.colorPrimaryLight},
@@ -443,6 +467,7 @@ const HomeScreen = ({navigation}) => {
         </TouchableOpacity>
       </View>
     </GestureHandlerRootView>
+    
   );
 };
 

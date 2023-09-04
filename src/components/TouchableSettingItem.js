@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     txt:{
         color:GlobalStyles.colors.txtColor,
         fontFamily:"Bold",
-        marginHorizontal:20
+        marginHorizontal:20,
+        textAlign:"left"
     }
 })

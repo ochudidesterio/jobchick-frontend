@@ -11,6 +11,8 @@ import {
 import React, {useState, useEffect} from 'react';
 import CircularImageView from '../components/CircularImageView';
 import {launchImageLibrary} from 'react-native-image-picker';
+import DocumentPicker from 'react-native-document-picker';
+
 import {GlobalStyles} from '../colors';
 import {useSelector} from 'react-redux';
 import CustomButton from '../components/CustomButton';
@@ -24,7 +26,7 @@ import getLanguageObject from '../util/LanguageUtil';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomDropDown from '../components/CustomDropDown';
 import CustomLocationDropDown from '../components/CustomLocationDropDown';
-
+import CustomCvUpoadButton from '../components/CustomCvUpoadButton';
 
 const EditProfileScreen = ({navigation}) => {
   const user = useSelector(state => state.auth.user);
@@ -34,34 +36,34 @@ const EditProfileScreen = ({navigation}) => {
   const [uri, setUri] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [profileImage, setProfileImage] = useState(user.profileImage);
+  const [cvUrl, setCvURl] = useState(user.cvUrl);
   const [firstName, setFirstName] = useState(user.firstName);
   const [gender, setGender] = useState(user.gender);
   const [lastName, setLastName] = useState(user.lastName);
   const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber);
   const [proffession, setProffession] = useState(user.proffession);
   const [authUsername, setAuthUserName] = useState(user.authUsername);
-  const [bio,setBio] = useState(user.bio)
+  const [bio, setBio] = useState(user.bio);
   const [age, setAge] = useState(user.age);
   const [isLoading, setIsLoading] = useState(false);
-  const [regions,setRegions] = useState([])
+  const [regions, setRegions] = useState([]);
   const [selectedItem, setSelectedItem] = useState(user.education);
-  const [locationItem,setLocationItem] = useState(user.location)
+  const [locationItem, setLocationItem] = useState(user.location);
+
+  const [cvTxt, setCvTxt] = useState('Attach Cv');
 
   const [selectedLanguages, setSelectedLanguages] = useState([]);
 
-
-  const getRegions = async ()=>{
+  const getRegions = async () => {
     try {
-      const response = await api.get(`/region/all`)
-      setRegions(response.data)
-      setLocationItem(response.data[0].name)
-    } catch (error) {
-      
-    }
-  }
-  useEffect(()=>{
-    getRegions()
-  },[])
+      const response = await api.get(`/region/all`);
+      setRegions(response.data);
+      setLocationItem(response.data[0].name);
+    } catch (error) {}
+  };
+  useEffect(() => {
+    getRegions();
+  }, []);
   const userData = {
     firstName: '',
     lastName: '',
@@ -72,10 +74,11 @@ const EditProfileScreen = ({navigation}) => {
     profileImage: '',
     age,
     education: '',
+    cvUrl: '',
     skills: [],
     languages: [],
-    bio:'',
-    location:'',
+    bio: '',
+    location: '',
   };
   function generateRandomNumber() {
     return Math.floor(Math.random() * 1000000);
@@ -143,6 +146,70 @@ const EditProfileScreen = ({navigation}) => {
     } finally {
     }
   };
+  const pickCvAndUpload = async () => {
+    try {
+      const result = await DocumentPicker.pick({
+        type: [DocumentPicker.types.pdf],
+      });
+
+      console.log('Result:', result);
+
+      if (result && result.length > 0) {
+        const pickedDocument = result[0]; // Assuming you're only picking one document
+        try {
+          // Upload the picked document to Firebase or perform other operations
+          const randomFileName = `cv_${generateRandomNumber()}.pdf`;
+          const reference = storageRef(
+            storage,
+            `cv/${user.id}/${randomFileName}`,
+          );
+
+          const response = await fetch(pickedDocument.uri);
+          const blob = await response.blob();
+
+          const snapShot = await uploadBytes(reference, blob);
+
+          console.log('CV uploaded successfully');
+
+          // Get the download URL of the uploaded CV
+          const cvDownloadUrl = await getDownloadURL(snapShot.ref);
+          if (cvDownloadUrl) {
+            setCvTxt('Uploaded');
+            setCvURl(cvDownloadUrl);
+            console.log('CV download URL:', cvDownloadUrl);
+          } else {
+            setCvTxt('Failed');
+          }
+
+          // Now you can update the user's CV URL or perform other operations
+          // You might want to store the CV URL in your userData or user state
+          // For example: userData.cvUrl = url;
+        } catch (uploadError) {
+          console.error('Error uploading CV:', uploadError);
+          setCvTxt('Failed');
+        }
+
+        console.log(
+          'URI: ' + pickedDocument.uri,
+          'Type: ' + pickedDocument.type,
+          'Name: ' + pickedDocument.name,
+          'Size: ' + pickedDocument.size,
+        );
+      } else {
+        console.log('No document picked.');
+      }
+    } catch (error) {
+      console.error('Error picking document:', error);
+    }
+  };
+  useEffect(() => {
+    if (cvUrl === null) {
+      setCvTxt('Attach Cv');
+    } else {
+      setCvTxt('Uploaded');
+    }
+  }, []);
+
   useEffect(() => {
     setProfileImage(uri);
     if (user.skills.length > 0) {
@@ -179,9 +246,9 @@ const EditProfileScreen = ({navigation}) => {
     userData.languages = languageValues;
     userData.bio = bio;
     userData.location = locationItem;
+    userData.cvUrl = cvUrl;
 
-
-   // console.log("User",userData)
+    // console.log("User",userData)
 
     try {
       setIsLoading(true);
@@ -228,8 +295,6 @@ const EditProfileScreen = ({navigation}) => {
     }
   };
 
-
-
   return (
     <ScrollView style={styles.container}>
       <View style={styles.holder}>
@@ -250,24 +315,22 @@ const EditProfileScreen = ({navigation}) => {
       </View>
       <View style={styles.detailsContainer}>
         <View style={styles.editContainer}>
-         
-        
-           <CustomEditInput
-            placeholder={util.lastName}
-            value={lastName}
-            onChangeText={setLastName}
-            isMultline={false}
-            icon ="person-circle-outline"
-            inputHolder="last name"
-          />
-            <CustomEditInput
+          <CustomEditInput
             placeholder={util.firstName}
             value={firstName}
             onChangeText={setFirstName}
             isMultline={false}
-            icon ="person-circle-outline"
+            icon="person-circle-outline"
             inputHolder="first name"
+          />
 
+          <CustomEditInput
+            placeholder={util.lastName}
+            value={lastName}
+            onChangeText={setLastName}
+            isMultline={false}
+            icon="person-circle-outline"
+            inputHolder="last name"
           />
         </View>
         <View style={styles.editContainer}>
@@ -276,9 +339,8 @@ const EditProfileScreen = ({navigation}) => {
             value={authUsername}
             onChangeText={setAuthUserName}
             isMultline={false}
-            icon ="person"
+            icon="person"
             inputHolder="username"
-
           />
           <CustomEditInput
             placeholder={util.gender}
@@ -287,7 +349,6 @@ const EditProfileScreen = ({navigation}) => {
             isMultline={false}
             inputHolder="gender"
             icon="people"
-
           />
         </View>
         <View style={styles.editContainer}>
@@ -299,8 +360,6 @@ const EditProfileScreen = ({navigation}) => {
             isMultline={false}
             icon="calendar"
             inputHolder="age"
-
-
           />
           <CustomEditInput
             placeholder={util.phonenumber}
@@ -310,8 +369,6 @@ const EditProfileScreen = ({navigation}) => {
             isMultline={false}
             icon="call"
             inputHolder="telephone"
-
-
           />
         </View>
         <View style={styles.editContainer}>
@@ -321,15 +378,11 @@ const EditProfileScreen = ({navigation}) => {
             onChangeText={setBio}
             isMultline={true}
             inputHolder="biography"
-
-
           />
         </View>
         <View style={styles.dropdownWrapper}>
           <CustomLocationDropDown
-            options={
-              regions.map(region => region.name)
-            }
+            options={regions.map(region => region.name)}
             defaultValue={locationItem}
             onSelect={value => setLocationItem(value)}
           />
@@ -342,7 +395,6 @@ const EditProfileScreen = ({navigation}) => {
             isMultline={false}
             icon="briefcase"
             inputHolder="proffession"
-
           />
         </View>
 
@@ -358,23 +410,6 @@ const EditProfileScreen = ({navigation}) => {
             onSelect={value => setSelectedItem(value)}
           />
         </View>
-        
-        {/* <SafeAreaView>
-          <View style={styles.dropdownWrapper}>
-        <DropdownMultiselectView
-          data={[
-            { key: 'English', value: 'English' },
-            { key: 'Kiswahili', value: 'Kiswahili' },
-            { key: 'Hebrew', value: 'Hebrew' },
-            // Add more languages as needed
-          ]}
-          displayKey="value"
-          displayValue="key"
-          selectedItem={selectedLanguages}
-          setSelectedItem={setSelectedLanguages}
-        />
-      </View>
-        </SafeAreaView> */}
 
         <View>
           {languages.map((language, index) => (
@@ -385,7 +420,6 @@ const EditProfileScreen = ({navigation}) => {
                 onChangeText={text => handleLanguageChange(index, text)}
                 isMultline={false}
                 icon="language"
-
               />
               {index === languages.length - 1 && languages.length < 3 && (
                 <TouchableOpacity style={styles.test} onPress={addLanguage}>
@@ -410,7 +444,6 @@ const EditProfileScreen = ({navigation}) => {
                 onChangeText={text => handleSkillChange(index, text)}
                 isMultline={false}
                 icon="checkmark-done-sharp"
-
               />
               {index === skills.length - 1 && skills.length < 3 && (
                 <TouchableOpacity style={styles.test} onPress={addSkill}>
@@ -438,6 +471,11 @@ const EditProfileScreen = ({navigation}) => {
             </View>
           )}
         </View>
+        {user && user.role === 'USER' && (
+          <View style={styles.editContainer}>
+            <CustomCvUpoadButton title={cvTxt} onPress={pickCvAndUpload} />
+          </View>
+        )}
 
         <View style={styles.editContainer}>
           <CustomButton title={util.updateProfile} onPress={handleSubmit} />

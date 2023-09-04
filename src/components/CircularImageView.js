@@ -5,8 +5,11 @@ import {GlobalStyles} from '../colors';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import {useSelector} from 'react-redux';
 import getLanguageObject from '../util/LanguageUtil';
+import {Alert} from 'react-native';
+import RNFetchBlob from 'rn-fetch-blob';
+import Permissions from 'react-native-permissions';
 
-const CircularImageView = ({imageSource, onPress, icon, user}) => {
+const CircularImageView = ({imageSource, onPress, icon, user, download}) => {
   const language = useSelector(state => state.auth.language);
   const util = getLanguageObject(language);
   const getProgressPercentage = () => {
@@ -40,6 +43,79 @@ const CircularImageView = ({imageSource, onPress, icon, user}) => {
     return percent;
   };
 
+  function generateRandomNumber() {
+    return Math.floor(Math.random() * 1000000);
+  }
+
+  const downloadPDF = async () => {
+    try {
+      const {dirs} = RNFetchBlob.fs;
+      const downloadPath = `${dirs.DownloadDir}/`;
+
+      const isFileExists = await RNFetchBlob.fs.exists(
+        `${downloadPath}${user.firstName}.pdf`,
+      );
+
+      if (isFileExists) {
+        // Append a timestamp to the filename for uniqueness
+        const timestamp = new Date().getTime();
+        const uniqueFilename = `${user.firstName}_${timestamp}.pdf`;
+
+        const response = await RNFetchBlob.config({
+          fileCache: true,
+          addAndroidDownloads: {
+            useDownloadManager: true,
+            notification: true,
+            mediaScannable: true,
+            title: uniqueFilename,
+            path: downloadPath + uniqueFilename,
+          },
+        }).fetch('GET', `${user.cvUrl}`);
+
+        console.log('Download Status:', response.path());
+      } else {
+        // File doesn't exist, proceed with regular download
+        const response = await RNFetchBlob.config({
+          fileCache: true,
+          addAndroidDownloads: {
+            useDownloadManager: true,
+            notification: true,
+            mediaScannable: true,
+            title: `${user.firstName}.pdf`,
+            path: downloadPath + `${user.firstName}.pdf`,
+          },
+        }).fetch('GET', `${user.cvUrl}`);
+
+        console.log('Download Status:', response.path());
+      }
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+    }
+  };
+
+  const downloadFile = async () => {
+    try {
+      const permissionStatus = await Permissions.request(
+        'android.permission.WRITE_EXTERNAL_STORAGE',
+      );
+
+      if (permissionStatus === 'granted') {
+        if (user.cvUrl !== null) {
+          downloadPDF();
+        } else {
+          Alert.alert('No CV', 'User has not uploaded CV');
+        }
+      } else {
+        Alert.alert(
+          'Permission Denied!',
+          'You need to give storage permission to download the file',
+        );
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.editButton} onPress={onPress}>
@@ -47,9 +123,13 @@ const CircularImageView = ({imageSource, onPress, icon, user}) => {
           <Icon name={icon} size={20} color="#FFFFFF" />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.touchEnd}>
-        <Text style={styles.touchEndTxt}>קו"ח</Text>
-      </TouchableOpacity>
+      {user && user.role === 'USER' && (
+        <TouchableOpacity onPress={downloadFile} style={styles.touchEnd}>
+          <Text onPress={downloadFile} style={styles.touchEndTxt}>
+            {user && user.role === 'USER' && 'CV'}
+          </Text>
+        </TouchableOpacity>
+      )}
       {/* <UserImage user={user}/> */}
       {/* <View style={[styles.imageContainer]}> */}
       <AnimatedCircularProgress
@@ -153,13 +233,13 @@ const styles = StyleSheet.create({
   },
   touchEnd: {
     position: 'absolute',
-    right: 120,
+    right: 130,
     bottom: 10,
     top: 35,
     justifyContent: 'center',
     alignItems: 'flex-start',
     width: 90,
-    paddingLeft: 10,
+    paddingLeft: 20,
     height: 30,
 
     borderRadius: 50,
