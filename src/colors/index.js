@@ -18,6 +18,7 @@ export const GlobalStyles = {
     error50: '#fcc4e4',
     error500: '#9b095c',
     gray500: '#39324a',
+    grey:'#bfc1c2',
     hint: '#9B9B9B',
     edit:'#A7A7A7',
     whiteSmoke:'#F0FAFA',
@@ -28,5 +29,6 @@ export const GlobalStyles = {
     gold:"#FFB301",
     userBg:"#F8F8F8",
     tabIconColor:"#005367",
+    border:"#ccc"
   },
 };

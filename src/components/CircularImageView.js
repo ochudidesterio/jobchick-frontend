@@ -9,7 +9,7 @@ import {Alert} from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import Permissions from 'react-native-permissions';
 
-const CircularImageView = ({imageSource, onPress, icon, user, download}) => {
+const CircularImageView = ({imageSource, onPress, icon, user, viewGallery}) => {
   const language = useSelector(state => state.auth.language);
   const util = getLanguageObject(language);
   const getProgressPercentage = () => {
@@ -126,10 +126,16 @@ const CircularImageView = ({imageSource, onPress, icon, user, download}) => {
       {user && user.role === 'USER' && (
         <TouchableOpacity onPress={downloadFile} style={styles.touchEnd}>
           <Text onPress={downloadFile} style={styles.touchEndTxt}>
-            {user && user.role === 'USER' && 'CV'}
+            {user && user.role === 'USER' && util.cv}
           </Text>
         </TouchableOpacity>
       )}
+
+<TouchableOpacity onPress={viewGallery} style={styles.touchGallery}>
+          <Text onPress={viewGallery} style={styles.touchEndTxt}>
+            {util.myGallery}
+          </Text>
+        </TouchableOpacity>
       {/* <UserImage user={user}/> */}
       {/* <View style={[styles.imageContainer]}> */}
       <AnimatedCircularProgress
@@ -244,6 +250,21 @@ const styles = StyleSheet.create({
 
     borderRadius: 50,
     backgroundColor: GlobalStyles.colors.red,
+    overflow: 'hidden',
+  },
+  touchGallery: {
+    position: 'absolute',
+    left: 140,
+    bottom: 10,
+    top: 35,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    width: 120,
+    paddingRight: 15,
+    height: 30,
+
+    borderRadius: 50,
+    backgroundColor: GlobalStyles.colors.green,
     overflow: 'hidden',
   },
   touchEndTxt: {

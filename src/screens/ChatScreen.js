@@ -5,9 +5,13 @@ import { addDoc,collection,onSnapshot,query, where, orderBy,serverTimestamp } fr
 import { GlobalStyles } from '../colors/index.js';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MatIcon from 'react-native-vector-icons/MaterialIcons';
+import { useSelector } from 'react-redux';
+import getLanguageObject from '../util/LanguageUtil.js';
 
 
 const ChatScreen = ({ route,navigation }) => {
+  const language = useSelector(state => state.auth.language);
+  const util = getLanguageObject(language);
   const { user,id,name } = route.params;
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
@@ -81,7 +85,7 @@ useEffect(() => {
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={120}
     >
         <View style={styles.chatNameContainer}>
-            <Text style={styles.chatName}>Chat with {name}</Text>
+            <Text style={styles.chatName}>{util.chatWith} {name}</Text>
         </View>
         <View style={styles.line} />
 
@@ -115,7 +119,7 @@ useEffect(() => {
           value={message}
           multiline
           onChangeText={(text) => setMessage(text)}
-          placeholder="Type your message..."
+          placeholder={util.typeYourMsg +"..."} 
           placeholderTextColor={GlobalStyles.colors.hint}
         />
         <TouchableOpacity style={styles.send} onPress={sendMessage}>

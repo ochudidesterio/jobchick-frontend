@@ -2,9 +2,15 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React,{useState,useEffect} from 'react'
 import { GlobalStyles } from '../colors'
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useSelector } from 'react-redux';
+import getLanguageObject from '../util/LanguageUtil';
 
 
 const PremiumView = ({color,premium}) => {
+    const language = useSelector(state => state.auth.language);
+    const util = getLanguageObject(language);
+
+
 
     
   return (
@@ -17,8 +23,8 @@ const PremiumView = ({color,premium}) => {
             </View>
         </View>
         <View style={styles.premiumRight}>
-            <Text style={styles.txtPrem}>GET A PREMIUM</Text>
-            {premium.length > 0 && <Text style={styles.price}>{premium[0].price} per month</Text>}
+            <Text style={styles.txtPrem}>{util.getPremium}</Text>
+            {premium.length > 0 && <Text style={styles.price}>{premium[0].price} {util.perMonth}</Text>}
         </View>
       </TouchableOpacity>
     </View>

@@ -4,9 +4,13 @@ import {GlobalStyles} from '../colors';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ParagraghView from '../components/ParagraghView';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import getLanguageObject from '../util/LanguageUtil';
 
 const UserCard = ({user}) => {
     const navigation = useNavigation()
+    const language = useSelector(state => state.auth.language);
+    const util = getLanguageObject(language);
     const showUserDetails =()=>{
       let userParam = user
         navigation.navigate("UserDetails",{userParam})
@@ -26,7 +30,7 @@ const UserCard = ({user}) => {
           />
         </View>
         <TouchableOpacity style={styles.cv}>
-          <Text>CV</Text>
+          <Text>{util.cv}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.namespace}>

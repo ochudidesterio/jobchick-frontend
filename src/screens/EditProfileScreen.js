@@ -5,7 +5,6 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Button,
   Text,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
@@ -24,9 +23,13 @@ import {useDispatch} from 'react-redux';
 import {updateUser} from '../store/slices/authSlice';
 import getLanguageObject from '../util/LanguageUtil';
 import Icon from 'react-native-vector-icons/Ionicons';
-import CustomDropDown from '../components/CustomDropDown';
-import CustomLocationDropDown from '../components/CustomLocationDropDown';
+import Ent from 'react-native-vector-icons/Entypo';
+
 import CustomCvUpoadButton from '../components/CustomCvUpoadButton';
+import DropDownModal from '../components/DropDownModal';
+import {MultipleSelectList} from 'react-native-dropdown-select-list';
+import {LANGUAGES} from '../util/util';
+import {LEVELS} from '../util/util';
 
 const EditProfileScreen = ({navigation}) => {
   const user = useSelector(state => state.auth.user);
@@ -53,6 +56,43 @@ const EditProfileScreen = ({navigation}) => {
   const [cvTxt, setCvTxt] = useState('Attach Cv');
 
   const [selectedLanguages, setSelectedLanguages] = useState([]);
+
+  const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
+  const [isEducationModalVisible, setIsEducationModalVisible] = useState(false);
+
+  const [skill, setSkills] = useState('');
+  const [badges, setBadges] = useState(user.skills);
+  const addBadge = () => {
+    if (skill.trim() !== '') {
+      setBadges([...badges, skill]);
+      setSkills('');
+    }
+  };
+
+  const handleTextChange = text => {
+    setSkills(text);
+  };
+
+  const removeBadge = item => {
+    const updatedBadges = badges.filter(badge => badge !== item);
+    setBadges(updatedBadges);
+  };
+
+  const handleLocationSelect = item => {
+    setLocationItem(item.name);
+  };
+
+  const toggleLocationModal = () => {
+    setIsLocationModalVisible(!isLocationModalVisible);
+  };
+
+  const handleEducationSelect = item => {
+    setSelectedItem(item.name);
+  };
+
+  const toggleEducationModal = () => {
+    setIsEducationModalVisible(!isEducationModalVisible);
+  };
 
   const getRegions = async () => {
     try {
@@ -92,6 +132,9 @@ const EditProfileScreen = ({navigation}) => {
       console.log(error);
     }
   };
+  const handleUploads =()=>{
+    navigation.navigate('uploads',{user:user})
+  }
   const pickPhoto = async () => {
     try {
       const result = await launchImageLibrary({
@@ -174,7 +217,7 @@ const EditProfileScreen = ({navigation}) => {
           // Get the download URL of the uploaded CV
           const cvDownloadUrl = await getDownloadURL(snapShot.ref);
           if (cvDownloadUrl) {
-            setCvTxt('Uploaded');
+            setCvTxt(util.uploaded);
             setCvURl(cvDownloadUrl);
             console.log('CV download URL:', cvDownloadUrl);
           } else {
@@ -204,35 +247,20 @@ const EditProfileScreen = ({navigation}) => {
   };
   useEffect(() => {
     if (cvUrl === null) {
-      setCvTxt('Attach Cv');
+      setCvTxt(util.attachCv);
     } else {
-      setCvTxt('Uploaded');
+      setCvTxt(util.uploaded);
     }
   }, []);
 
   useEffect(() => {
     setProfileImage(uri);
-    if (user.skills.length > 0) {
-      setSkills(
-        user.skills.map((name, index) => ({id: index + 1, value: name})),
-      );
-    }
+    
 
-    if (user.languages.length > 0) {
-      setLanguages(
-        user.languages.map((name, index) => ({id: index + 1, value: name})),
-      );
-    }
     console.log('EffectUri', profileImage);
   }, [uri]);
 
   const handleSubmit = async () => {
-    // console.log("item",selectedItem)
-    const skillValues = skills.map(skill => skill.value);
-    const languageValues = languages.map(language => language.value);
-    // console.log("Skills",skillValues)
-    // console.log("Languages",languageValues)
-
     userData.authUsername = authUsername;
     userData.firstName = firstName;
     userData.lastName = lastName;
@@ -242,13 +270,11 @@ const EditProfileScreen = ({navigation}) => {
     userData.profileImage = profileImage;
     userData.age = age;
     userData.education = selectedItem;
-    userData.skills = skillValues;
-    userData.languages = languageValues;
+    userData.skills = badges;
+    userData.languages = selectedLanguages;
     userData.bio = bio;
     userData.location = locationItem;
     userData.cvUrl = cvUrl;
-
-    // console.log("User",userData)
 
     try {
       setIsLoading(true);
@@ -262,36 +288,6 @@ const EditProfileScreen = ({navigation}) => {
       console.log('Update Error', error);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  //SKills
-
-  const [skills, setSkills] = useState([{id: 1, value: ''}]);
-  const handleSkillChange = (index, text) => {
-    const updatedSkills = [...skills];
-    updatedSkills[index].value = text;
-    setSkills(updatedSkills);
-  };
-  const addSkill = () => {
-    if (skills.length < 3) {
-      const newSkill = {id: skills.length + 1, value: ''};
-      setSkills([...skills, newSkill]);
-    }
-  };
-
-  //Languages
-
-  const [languages, setLanguages] = useState([{id: 1, value: ''}]);
-  const handleLanguageChange = (index, text) => {
-    const updatedLanguages = [...languages];
-    updatedLanguages[index].value = text;
-    setLanguages(updatedLanguages);
-  };
-  const addLanguage = () => {
-    if (languages.length < 3) {
-      const newLanguage = {id: languages.length + 1, value: ''};
-      setLanguages([...languages, newLanguage]);
     }
   };
 
@@ -309,6 +305,7 @@ const EditProfileScreen = ({navigation}) => {
                   : require('../images/person.jpg')
               }
               user={user}
+              viewGallery={handleUploads}
             />
           }
         </View>
@@ -373,18 +370,11 @@ const EditProfileScreen = ({navigation}) => {
         </View>
         <View style={styles.editContainer}>
           <CustomEditInput
-            placeholder="Bio"
+            placeholder={util.bio}
             value={bio}
             onChangeText={setBio}
             isMultline={true}
             inputHolder="biography"
-          />
-        </View>
-        <View style={styles.dropdownWrapper}>
-          <CustomLocationDropDown
-            options={regions.map(region => region.name)}
-            defaultValue={locationItem}
-            onSelect={value => setLocationItem(value)}
           />
         </View>
         <View style={styles.editContainer}>
@@ -397,69 +387,122 @@ const EditProfileScreen = ({navigation}) => {
             inputHolder="proffession"
           />
         </View>
+        <View style={styles.dropDownView}>
+          <Text style={styles.select}>{util.from}</Text>
+          <TouchableOpacity
+            style={styles.dropdownTrigger}
+            onPress={toggleLocationModal}>
+            <Text style={styles.txt}>
+              {locationItem !== null ? locationItem : 'Select Location'}
+            </Text>
+            <Icon
+              name="chevron-down-sharp"
+              size={20}
+              color={GlobalStyles.colors.txtColor}
+            />
+          </TouchableOpacity>
+        </View>
+        <DropDownModal
+          data={regions}
+          handleSelect={handleLocationSelect}
+          isModalVisible={isLocationModalVisible}
+          toggleModal={toggleLocationModal}
+          title="Region"
+        />
+        <View style={styles.dropDownView}>
+          <Text style={styles.select}>{util.education}</Text>
+          <TouchableOpacity
+            style={styles.dropdownTrigger}
+            onPress={toggleEducationModal}>
+            <Text style={styles.txt}>
+              {selectedItem !== null ? selectedItem : util.selectEducation}
+            </Text>
+            <Icon
+              name="chevron-down-sharp"
+              size={20}
+              color={GlobalStyles.colors.txtColor}
+            />
+          </TouchableOpacity>
+        </View>
+        <DropDownModal
+          data={LEVELS}
+          handleSelect={handleEducationSelect}
+          isModalVisible={isEducationModalVisible}
+          toggleModal={toggleEducationModal}
+          title={util.education}
+        />
 
-        <View style={styles.dropdownWrapper}>
-          <CustomDropDown
-            options={[
-              'Elementary Education',
-              'Secondary Education',
-              'Bachelors Degree',
-              'Masters Degree',
-            ]}
-            defaultValue={selectedItem}
-            onSelect={value => setSelectedItem(value)}
+        <View style={styles.multSelect}>
+          <Text style={styles.select}>{util.languages}</Text>
+
+          <MultipleSelectList
+            label={util.languages}
+            labelStyles={{color: GlobalStyles.colors.txtColor}}
+            setSelected={val => setSelectedLanguages(val)}
+            placeholder={<Text style={styles.txt}>{util.select}</Text>}
+            data={LANGUAGES}
+            dropdownTextStyles={{color: GlobalStyles.colors.txtColor}}
+            boxStyles={{
+              borderColor: GlobalStyles.colors.border,
+              borderWidth: 0.5,
+            }}
+            arrowicon={
+              <Icon
+                name="chevron-down"
+                color={GlobalStyles.colors.txtColor}
+                size={20}
+              />
+            }
+            maxHeight={250}
+            save="value"
+            fontFamily="Medium"
+            inputStyles={{color: GlobalStyles.colors.green}}
+            badgeStyles={{
+              backgroundColor: GlobalStyles.colors.colorPrimaryDark,
+            }}
+            notFoundText="language not found"
           />
         </View>
 
-        <View>
-          {languages.map((language, index) => (
-            <View style={styles.editContainer} key={language.id}>
-              <CustomEditInput
-                placeholder={`Language ${index + 1}`}
-                value={language.value}
-                onChangeText={text => handleLanguageChange(index, text)}
-                isMultline={false}
-                icon="language"
-              />
-              {index === languages.length - 1 && languages.length < 3 && (
-                <TouchableOpacity style={styles.test} onPress={addLanguage}>
-                  {/* You can customize the "plus" icon here */}
-                  <Icon
-                    name="add"
-                    size={20}
-                    color={GlobalStyles.colors.white}
-                  />
-                </TouchableOpacity>
-              )}
-            </View>
-          ))}
-        </View>
+        <View style={styles.skillContainer}>
 
-        <View>
-          {skills.map((skill, index) => (
-            <View style={styles.editContainer} key={skill.id}>
-              <CustomEditInput
-                placeholder={`Skill ${index + 1}`}
-                value={skill.value}
-                onChangeText={text => handleSkillChange(index, text)}
-                isMultline={false}
-                icon="checkmark-done-sharp"
-              />
-              {index === skills.length - 1 && skills.length < 3 && (
-                <TouchableOpacity style={styles.test} onPress={addSkill}>
-                  {/* You can customize the "plus" icon here */}
-                  <Icon
-                    name="add"
-                    size={20}
-                    color={GlobalStyles.colors.white}
-                  />
+          <View style={styles.skillInputContainer}>
+           
+            <CustomEditInput value={skill}
+            onChangeText={handleTextChange}
+            inputHolder={util.addYourSkill}
+            placeholder={util.skills}
+             />
+            <TouchableOpacity onPress={addBadge} style={styles.skillAddBtn}>
+              <Icon name="add" color={GlobalStyles.colors.white} size={20} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.skillBadgeContainer}>
+            {badges &&
+              badges.map((badge, index) => (
+                <TouchableOpacity
+                  style={styles.skillBadge}
+                  key={index}
+                  onPress={() => removeBadge(badge)}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      textAlign: 'left',
+                      fontFamily: 'Medium',
+                    }}>
+                    {badge}
+                  </Text>
+                  <View style={styles.skillCancel}>
+                    <Ent
+                      name="cross"
+                      size={15}
+                      color={GlobalStyles.colors.white}
+                    />
+                  </View>
                 </TouchableOpacity>
-              )}
-            </View>
-          ))}
+              ))}
+          </View>
         </View>
-
-        {/* <Button title="Save" onPress={handleSave} /> */}
 
         <View>
           {isLoading && (
@@ -472,9 +515,14 @@ const EditProfileScreen = ({navigation}) => {
           )}
         </View>
         {user && user.role === 'USER' && (
-          <View style={styles.editContainer}>
-            <CustomCvUpoadButton title={cvTxt} onPress={pickCvAndUpload} />
-          </View>
+          <>
+            <View style={styles.resume}>
+              <Text style={styles.select}>{util.resume}</Text>
+            </View>
+            <View style={styles.editContainer}>
+              <CustomCvUpoadButton title={cvTxt} onPress={pickCvAndUpload} />
+            </View>
+          </>
         )}
 
         <View style={styles.editContainer}>
@@ -519,6 +567,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingBottom: 90,
   },
+  resume: {
+    marginHorizontal: 25,
+    marginTop: 20,
+  },
   editContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -543,5 +595,81 @@ const styles = StyleSheet.create({
     marginBottom: 10,
 
     alignSelf: 'stretch',
+  },
+  dropDownView: {
+    marginHorizontal: 25,
+    marginVertical: 5,
+  },
+  multSelect: {
+    marginHorizontal: 25,
+    marginTop: 5,
+  },
+  dropdownTrigger: {
+    borderWidth: 0.5,
+    borderColor: '#ccc',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  select: {
+    fontSize: 16,
+    fontFamily: 'Bold',
+    color: GlobalStyles.colors.txtColor,
+    textAlign: 'left',
+    marginBottom: 5,
+  },
+  skillContainer: {
+    marginHorizontal: 20,
+  },
+  skillInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+  },
+  skillInput: {
+    flex: 1,
+    borderColor: GlobalStyles.colors.border,
+    borderRadius: 5,
+    borderWidth: 0.5,
+    fontSize: 14,
+    height: 40,
+    textAlign: 'left',
+    color: GlobalStyles.colors.txtColor,
+    paddingLeft: 10,
+    marginRight: 10,
+  },
+  skillAddBtn: {
+    borderRadius: 10,
+    height: 40,
+    width: 40,
+    marginTop:24,
+    backgroundColor: GlobalStyles.colors.blur,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  skillBadgeContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+  },
+  skillBadge: {
+    backgroundColor: GlobalStyles.colors.colorPrimaryDark,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
+    margin: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  skillCancel: {
+    backgroundColor: GlobalStyles.colors.blur,
+    borderRadius: 100,
+    marginLeft: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

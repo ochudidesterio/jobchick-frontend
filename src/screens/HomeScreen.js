@@ -5,7 +5,10 @@ import {
   View,
   useWindowDimensions,
   TouchableOpacity,
-  ScrollView, RefreshControl
+  RefreshControl,
+  Text,
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState, useCallback} from 'react';
 import {GlobalStyles} from '../colors';
@@ -31,36 +34,106 @@ import Nope from '../images/nope.png';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Font from 'react-native-vector-icons/FontAwesome';
 import Ent from 'react-native-vector-icons/Entypo';
+import Geolocation from '@react-native-community/geolocation';
+import AndroidOpenSettings from 'react-native-android-open-settings';
+
 import {
   likeJob,
   setCompany,
+  setLoadedJobs,
   setMatchingIds,
   setUsers,
 } from '../store/slices/authSlice';
 
 import UserCard from '../cards/UserCard';
+import {
+  areArraysEqual,
+  calculateDistance,
+  filterJobsByCategory,
+  filterUsersByAgeRange,
+} from '../util/util';
+import {useFocusEffect} from '@react-navigation/native';
+import RefreshModal from '../components/RefreshModal';
+import getLanguageObject from '../util/LanguageUtil';
 
 const HomeScreen = ({navigation}) => {
+  const dispatch = useDispatch();
+  const language = useSelector(state => state.auth.language);
+  const util = getLanguageObject(language);
   const {width: screenWidth} = useWindowDimensions();
   const user = useSelector(state => state.auth.user);
   const ids = useSelector(state => state.auth.matchingIds);
   const company = useSelector(state => state.auth.company);
   const [jobs, setJobs] = useState([]);
   const [users, setUsers] = useState([]);
-  const dispatch = useDispatch();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const[currentUserIndex,setCurrentUserIndex] = useState(0)
+  const [currentUserIndex, setCurrentUserIndex] = useState(0);
   const [nextIndex, setNextIndex] = useState(currentIndex + 1);
-  const [nextUserIndex,setNextUserIndex]=useState(currentUserIndex + 1)
+  const [nextUserIndex, setNextUserIndex] = useState(currentUserIndex + 1);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState({
+    latitude: null,
+    longitude: null,
+  });
+  const [userSetting, setUserSettings] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   let currentJob;
   let nextJob;
   let currentUser;
   let nextUser;
+  const checkPermissionAndRequest = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        const {latitude, longitude} = position.coords;
+        // Use latitude and longitude to do whatever you need
+
+        if (
+          latitude !== currentLocation.latitude ||
+          longitude !== currentLocation.longitude
+        ) {
+          setCurrentLocation({latitude, longitude});
+        }
+        console.log('CurrentLocation', currentLocation);
+      },
+      error => {
+        Alert.alert(
+          util.locationPermission,
+          util.enableGPS,
+          [
+            {
+              text: util.cancel,
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: util.turnOnGPS,
+              onPress: () => {
+                // Open the device settings to enable GPS
+                AndroidOpenSettings.locationSourceSettings();
+              },
+            },
+          ],
+          {cancelable: false},
+        );
+      },
+    );
+  };
+  useEffect(() => {
+    checkPermissionAndRequest();
+  });
+
+  const getUserSettings = async () => {
+    try {
+      const response = await api.get(`/setting/get/${user.id}`);
+      setUserSettings(response.data);
+    } catch (error) {}
+  };
+
   const getJobs = async () => {
     try {
       const response = await api.get('/job/all/active');
+
       setJobs(response.data);
       setIsDataLoaded(true);
     } catch (error) {
@@ -70,12 +143,14 @@ const HomeScreen = ({navigation}) => {
   const getUsers = async () => {
     try {
       const response = await api.get(`/user/company/${user.companyId}`);
-      const activeUsers = response.data.filter(user => user.showProfile === false);
+      const activeUsers = response.data.filter(
+        user => user.showProfile === false,
+      );
 
-      console.log("Active ",activeUsers)
+      console.log('Active ', activeUsers);
 
       setUsers(activeUsers);
-      setIsDataLoaded(true)
+      setIsDataLoaded(true);
     } catch (e) {
       console.log(e);
     }
@@ -96,6 +171,9 @@ const HomeScreen = ({navigation}) => {
   };
 
   useEffect(() => {
+    getUserSettings();
+  }, []);
+  useEffect(() => {
     if (user.role === 'USER') {
       getJobs();
     }
@@ -109,12 +187,85 @@ const HomeScreen = ({navigation}) => {
     getMatchingIds(user.id);
   }, []);
 
+  useEffect(() => {
+    if (
+      userSetting !== null &&
+      jobs.length > 0 &&
+      userSetting.userId !== null &&
+      userSetting.jobTypes !== null &&
+      userSetting.categories !== null &&
+      currentLocation.latitude !== null &&
+      currentLocation.longitude !== null
+    ) {
+      console.log('Setting', userSetting);
+      let filteredJobsByCategory = [];
+      let filteredJobsWithCategoriesMatchingTypes = [];
+
+      // Calculate distance and filter jobs within userSetting.distance
+      const filteredJobs = jobs.filter(job => {
+        const jobDistance = calculateDistance(
+          currentLocation.latitude,
+          currentLocation.longitude,
+          job.latitude,
+          job.longitude,
+        );
+        return jobDistance <= userSetting.distance;
+      });
+
+      if (userSetting.categories.length > 0 && filteredJobs.length > 0) {
+        filteredJobsByCategory = filterJobsByCategory(
+          filteredJobs,
+          userSetting.categories,
+        );
+      }
+      if (userSetting.categories.length === 0) {
+        filteredJobsByCategory = filteredJobs;
+      }
+
+      console.log('FilteredJobsByCategory1', filteredJobsByCategory);
+
+      if (
+        userSetting.jobTypes.length > 0 &&
+        filteredJobsByCategory.length > 0
+      ) {
+        // Extract job type names from userSetting.jobTypes
+        const jobTypeNames = userSetting.jobTypes.map(jobType => jobType.name);
+        console.log('TypeNames', jobTypeNames);
+        // Filter the filteredJobs array based on job type names
+        filteredJobsWithCategoriesMatchingTypes = filteredJobsByCategory.filter(
+          job => jobTypeNames.includes(job.type),
+        );
+        console.log('FinalFilter', filteredJobsWithCategoriesMatchingTypes);
+        if (!areArraysEqual(jobs, filteredJobsWithCategoriesMatchingTypes)) {
+          setJobs(filteredJobsWithCategoriesMatchingTypes);
+        }
+      } else {
+        // Update the jobs array with filteredJobs
+        //setJobs(filteredJobs);
+        if (!areArraysEqual(jobs, filteredJobsByCategory)) {
+          setJobs(filteredJobsByCategory);
+        }
+      }
+    }
+  }, [userSetting, jobs, currentLocation]);
+
+  useEffect(() => {
+    if (userSetting !== null && users.length > 0 && userSetting.age > 0) {
+      const filteredUsers = filterUsersByAgeRange(users, userSetting.age);
+      console.log('FilteredUsers', filteredUsers.length);
+      //update users array with filtered users
+      if (!areArraysEqual(users, filteredUsers)) {
+        setUsers(filteredUsers);
+      }
+    }
+  }, [userSetting, users]);
+
   currentJob = jobs[currentIndex];
   nextJob = jobs[nextIndex];
 
-  if(users.length > 0){
-    currentUser = users[currentUserIndex]
-    nextUser = users[nextUserIndex]
+  if (users.length > 0) {
+    currentUser = users[currentUserIndex];
+    nextUser = users[nextUserIndex];
   }
 
   const doMatching = () => {
@@ -124,14 +275,23 @@ const HomeScreen = ({navigation}) => {
       );
       if (match && match.likedBack) {
         Alert.alert(
-          'Congratulations!',
-          "It's a match!",
+          util.congratulations,
+          util.itsAmatch,
           [
             {
-              text: 'Start Chat',
+              text: util.startChat,
               onPress: () => {
                 // Add code to handle the 'Start Chat' button press
                 console.log('Start Chat');
+
+                let id;
+                let name;
+                if (user.role === 'USER') {
+                  id = currentJob.company.adminId;
+                  name = currentJob.company.name;
+                  navigation.navigate('chats', {user: user, id: id, name: name});
+
+                }
               },
             },
           ],
@@ -146,20 +306,22 @@ const HomeScreen = ({navigation}) => {
   }, [currentJob]);
 
   const onSwipeLeft = () => {
-    if(user.role === "USER"){
+    if (user.role === 'USER') {
       console.log('JobLeft::', currentJob.title);
     }
   };
   const onSwipeRight = () => {
-    if(user.role === "USER"){
+    if (user.role === 'USER') {
       console.log('JobRight::', currentJob.title);
     }
   };
 
   const ROTATION = 60;
   const SWIPE_VELOCITY = 800;
+  const translateY = useSharedValue(0);
   const hiddenTranslate = 2 * screenWidth;
   const translateX = useSharedValue(1);
+
   const rotate = useDerivedValue(
     () =>
       interpolate(translateX.value, [0, hiddenTranslate], [0, ROTATION]) +
@@ -197,14 +359,38 @@ const HomeScreen = ({navigation}) => {
   const nopeStyle = useAnimatedStyle(() => ({
     opacity: interpolate(translateX.value, [0, -hiddenTranslate / 6], [0, 1]),
   }));
+
+  const handleRefresh = async () => {
+    console.log('Refreshing');
+    if (user.role === 'USER') {
+      await getUserSettings();
+      await getJobs();
+    }
+    setIsRefreshing(false);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsRefreshing(true);
+      handleRefresh();
+    }, []),
+  );
+
   const gestureHandler = useAnimatedGestureHandler({
     onStart: (_, context) => {
       context.startX = translateX.value;
     },
     onActive: (event, context) => {
       translateX.value = context.startX + event.translationX;
+      translateY.value = event.translationY;
     },
     onEnd: event => {
+      if (translateY.value > 100) {
+        console.log('Refreshed', event);
+        runOnJS(setIsRefreshing)(true);
+        runOnJS(handleRefresh)();
+      }
+
       if (Math.abs(event.velocityX) < SWIPE_VELOCITY) {
         translateX.value = withSpring(0);
         return;
@@ -220,55 +406,54 @@ const HomeScreen = ({navigation}) => {
         runOnJS(onSwipeLeft)();
       }
 
-      if(user.role === "USER"){
+      if (user.role === 'USER') {
         if (currentIndex < jobs.length) {
           runOnJS(setCurrentIndex)(currentIndex + 1);
         }
-      }else{
-        if(currentUserIndex < users.length){
-          runOnJS(setCurrentUserIndex)(currentUserIndex + 1)
+      } else {
+        if (currentUserIndex < users.length) {
+          runOnJS(setCurrentUserIndex)(currentUserIndex + 1);
         }
       }
     },
   });
+
   useEffect(() => {
     translateX.value = 0;
-    if(user.role === "USER"){
+    if (user.role === 'USER') {
       if (currentIndex < jobs.length) {
         setNextIndex(currentIndex + 1);
       } else {
         setCurrentIndex(0);
         setNextIndex(currentIndex + 1);
       }
-    }else{
-      if(currentUserIndex < users.length){
-        setNextUserIndex(currentUserIndex + 1)
-      }else{
-        setCurrentUserIndex(0)
-        setNextUserIndex(currentUserIndex + 1)
+    } else {
+      if (currentUserIndex < users.length) {
+        setNextUserIndex(currentUserIndex + 1);
+      } else {
+        setCurrentUserIndex(0);
+        setNextUserIndex(currentUserIndex + 1);
       }
     }
-  
-  }, [currentIndex, translateX,currentUserIndex]);
+  }, [currentIndex, translateX, currentUserIndex]);
 
   const likeJobData = {
     jobId: '',
     userId: '',
     companyId: '',
   };
-  const chat = () =>{
+  const chat = () => {
     let id;
     let name;
-    if(user.role === "USER"){
-       id = currentJob.company.adminId
-       name = currentJob.company.name
-    }else{
-      id = currentUser.id
-      name = currentUser.firstName+" "+currentUser.lastName
+    if (user.role === 'USER') {
+      id = currentJob.company.adminId;
+      name = currentJob.company.name;
+    } else {
+      id = currentUser.id;
+      name = currentUser.firstName + ' ' + currentUser.lastName;
     }
-    navigation.navigate("chats",{user:user,id:id,name:name})
-
-  }
+    navigation.navigate('chats', {user: user, id: id, name: name});
+  };
   const like = async () => {
     if (user.role === 'USER') {
       dispatch(likeJob(currentJob));
@@ -276,22 +461,24 @@ const HomeScreen = ({navigation}) => {
         likeJobData.jobId = currentJob.id;
         likeJobData.userId = user.id;
         likeJobData.companyId = currentJob.company.id;
+        if (currentIndex < jobs.length) {
+          translateX.value = withSpring(-hiddenTranslate);
+          // runOnJS(onSwipeLeft)();
+          runOnJS(setCurrentIndex)(currentIndex + 1);
+        }
         await api.post('/job/like', likeJobData);
         const res = await api.get(`/likes/user/${user.id}`);
         dispatch(setMatchingIds(res.data));
-        if (currentIndex < jobs.length) {
-          translateX.value = withSpring(-hiddenTranslate);
-          runOnJS(onSwipeLeft)();
-          runOnJS(setCurrentIndex)(currentIndex + 1);
-        }
       } catch (error) {
         console.log('LikeJobError', error);
       }
     } else {
-      
-      const response = await api.post(
-        `/companylikes/create/${company.id}/${currentUser.id}`
-      );
+      if (currentUserIndex < users.length) {
+        translateX.value = withSpring(-hiddenTranslate);
+        // runOnJS(onSwipeLeft)();
+        runOnJS(setCurrentUserIndex)(currentUserIndex + 1);
+      }
+      await api.post(`/companylikes/create/${company.id}/${currentUser.id}`);
     }
   };
   const nope = () => {
@@ -302,7 +489,7 @@ const HomeScreen = ({navigation}) => {
         runOnJS(setCurrentIndex)(currentIndex + 1);
       }
     } else {
-      if (currentUserIndex< users.length) {
+      if (currentUserIndex < users.length) {
         translateX.value = withSpring(-hiddenTranslate);
         runOnJS(onSwipeLeft)();
         runOnJS(setCurrentUserIndex)(currentUserIndex + 1);
@@ -312,13 +499,13 @@ const HomeScreen = ({navigation}) => {
   const back = () => {
     if (user.role === 'USER') {
       if (currentIndex > 0) {
-        setCurrentIndex(currentIndex - 1);
         translateX.value = withSpring(hiddenTranslate);
+        setCurrentIndex(currentIndex - 1);
       }
     } else {
       if (currentUserIndex > 0) {
-        setCurrentUserIndex(currentUserIndex - 1);
         translateX.value = withSpring(hiddenTranslate);
+        setCurrentUserIndex(currentUserIndex - 1);
       }
     }
   };
@@ -354,120 +541,142 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
   return (
-<GestureHandlerRootView style={styles.container}>
-      {user && user.role === 'USER' ? (
-        <View style={styles.stackContainer}>
-          {nextJob && (
-            <View style={styles.nextCard}>
-              <Animated.View style={[styles.animatedCard, nextCardStyle]}>
-                {isDataLoaded && <JobCard data={nextJob} />}
-              </Animated.View>
-            </View>
-          )}
-          {currentJob && (
-            <PanGestureHandler onGestureEvent={gestureHandler}>
-              <Animated.View style={[styles.animatedCard, cardStyle]}>
-                {isDataLoaded && (
-                  <>
-                    <Animated.Image
-                      source={Like}
-                      style={[styles.like, {left: 10}, likeStyle]}
-                      resizeMode="contain"
-                    />
-                    <Animated.Image
-                      source={Nope}
-                      style={[styles.like, {right: 10}, nopeStyle]}
-                      resizeMode="contain"
-                    />
-                    <JobCard data={currentJob} />
-                  </>
+    <View style={styles.outerView}>
+      <GestureHandlerRootView style={styles.container}>
+        {user && user.role === 'USER' ? (
+          <>
+            {jobs.length > 0 ? (
+              <View style={styles.stackContainer}>
+                {nextJob && (
+                  <View style={styles.nextCard}>
+                    <Animated.View style={[styles.animatedCard, nextCardStyle]}>
+                      {isDataLoaded && <JobCard data={nextJob} />}
+                    </Animated.View>
+                  </View>
                 )}
-              </Animated.View>
-            </PanGestureHandler>
-          )}
-        </View>
-      ) : (
-        
-        <>
-         <View style={styles.stackContainer}>
-          {nextUser && (
-            <View style={styles.nextCard}>
-              <Animated.View style={[styles.animatedCard, nextCardStyle]}>
-                {isDataLoaded && <UserCard user={nextUser} />}
-              </Animated.View>
-            </View>
-          )}
-          {currentUser &&  (
-            <PanGestureHandler onGestureEvent={gestureHandler}>
-              <Animated.View style={[styles.animatedCard, cardStyle]}>
-                {isDataLoaded && (
-                  <>
-                    <Animated.Image
-                      source={Like}
-                      style={[styles.like, {left: 10}, likeStyle]}
-                      resizeMode="contain"
-                    />
-                    <Animated.Image
-                      source={Nope}
-                      style={[styles.like, {right: 10}, nopeStyle]}
-                      resizeMode="contain"
-                    />
-                    <UserCard user={currentUser} />
-                  </>
+                {currentJob && (
+                  <PanGestureHandler onGestureEvent={gestureHandler}>
+                    <Animated.View style={[styles.animatedCard, cardStyle]}>
+                      {isDataLoaded && (
+                        <>
+                          <Animated.Image
+                            source={Like}
+                            style={[styles.like, {left: 10}, likeStyle]}
+                            resizeMode="contain"
+                          />
+                          <Animated.Image
+                            source={Nope}
+                            style={[styles.like, {right: 10}, nopeStyle]}
+                            resizeMode="contain"
+                          />
+                          <JobCard data={currentJob} />
+                        </>
+                      )}
+                    </Animated.View>
+                  </PanGestureHandler>
                 )}
-              </Animated.View>
-            </PanGestureHandler>
-          )}
-        </View>
-        </>
-      )}
-      <View style={styles.icons}>
-        <TouchableOpacity
-          onPress={back}
-          style={[
-            styles.button,
-            {backgroundColor: GlobalStyles.colors.orange},
-          ]}>
-          <View style={styles.holder}>
-            <Font
-              name="mail-reply"
-              size={25}
-              color={GlobalStyles.colors.white}
-            />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={nope}
-          style={[styles.button, {backgroundColor: GlobalStyles.colors.red}]}>
-          <View style={[styles.holder, {width: 35, height: 35}]}>
-            <Ent name="cross" size={30} color={GlobalStyles.colors.white} />
-          </View>
-        </TouchableOpacity>
+              </View>
+            ) : (
+              <PanGestureHandler onGestureEvent={gestureHandler}>
+                <Animated.View style={styles.stackContainer}>
+                  <Text style={styles.adminCardText}>{util.noJobsAvailable}</Text>
+                </Animated.View>
+              </PanGestureHandler>
+            )}
+          </>
+        ) : (
+          <>
+            {users.length > 0 ? (
+              <View style={styles.stackContainer}>
+                {nextUser && (
+                  <View style={styles.nextCard}>
+                    <Animated.View style={[styles.animatedCard, nextCardStyle]}>
+                      {isDataLoaded && <UserCard user={nextUser} />}
+                    </Animated.View>
+                  </View>
+                )}
+                {currentUser && (
+                  <PanGestureHandler onGestureEvent={gestureHandler}>
+                    <Animated.View style={[styles.animatedCard, cardStyle]}>
+                      {isDataLoaded && (
+                        <>
+                          <Animated.Image
+                            source={Like}
+                            style={[styles.like, {left: 10}, likeStyle]}
+                            resizeMode="contain"
+                          />
+                          <Animated.Image
+                            source={Nope}
+                            style={[styles.like, {right: 10}, nopeStyle]}
+                            resizeMode="contain"
+                          />
+                          <UserCard user={currentUser} />
+                        </>
+                      )}
+                    </Animated.View>
+                  </PanGestureHandler>
+                )}
+              </View>
+            ) : (
+              <PanGestureHandler onGestureEvent={gestureHandler}>
+                <Animated.View style={styles.stackContainer}>
+                  <Text style={styles.adminCardText}>No Users available!</Text>
+                </Animated.View>
+              </PanGestureHandler>
+            )}
+          </>
+        )}
+        <View style={styles.icons}>
+          <TouchableOpacity
+            onPress={back}
+            style={[
+              styles.button,
+              {backgroundColor: GlobalStyles.colors.orange},
+            ]}>
+            <View style={styles.holder}>
+              <Font
+                name="mail-reply"
+                size={25}
+                color={GlobalStyles.colors.white}
+              />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={nope}
+            style={[styles.button, {backgroundColor: GlobalStyles.colors.red}]}>
+            <View style={[styles.holder, {width: 35, height: 35}]}>
+              <Ent name="cross" size={30} color={GlobalStyles.colors.white} />
+            </View>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={like}
-          style={[styles.button, {backgroundColor: GlobalStyles.colors.green}]}>
-          <View style={[styles.holder, {width: 35, height: 35}]}>
-            <Icon name="heart" size={30} color={GlobalStyles.colors.white} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-        onPress={chat}
-          style={[
-            styles.button,
-            {backgroundColor: GlobalStyles.colors.colorPrimaryLight},
-          ]}>
-          <View style={styles.holder}>
-            <Icon
-              name="chatbubble-ellipses"
-              size={25}
-              color={GlobalStyles.colors.white}
-            />
-          </View>
-        </TouchableOpacity>
-      </View>
-    </GestureHandlerRootView>
-    
+          <TouchableOpacity
+            onPress={like}
+            style={[
+              styles.button,
+              {backgroundColor: GlobalStyles.colors.green},
+            ]}>
+            <View style={[styles.holder, {width: 35, height: 35}]}>
+              <Icon name="heart" size={30} color={GlobalStyles.colors.white} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={chat}
+            style={[
+              styles.button,
+              {backgroundColor: GlobalStyles.colors.colorPrimaryLight},
+            ]}>
+            <View style={styles.holder}>
+              <Icon
+                name="chatbubble-ellipses"
+                size={25}
+                color={GlobalStyles.colors.white}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
+        {isRefreshing && <RefreshModal isRefreshing={isRefreshing} />}
+      </GestureHandlerRootView>
+    </View>
   );
 };
 
@@ -478,6 +687,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: GlobalStyles.colors.white,
     paddingTop: 8,
+  },
+  outerView: {
+    height: '100%',
   },
   stackContainer: {
     flex: 1,

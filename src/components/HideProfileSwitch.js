@@ -6,9 +6,12 @@ import { setHideProfile } from '../store/slices/authSlice';
 import { GlobalStyles } from '../colors';
 import { async } from '@firebase/util';
 import api from '../api/api';
+import getLanguageObject from '../util/LanguageUtil';
 
 const HideProfileSwitch = ({id}) => {
   const dispatch = useDispatch();
+  const language = useSelector(state => state.auth.language);
+  const util = getLanguageObject(language);
  const hideProfile = async ()=>{
   try {
     await api.post(`/user/showprofile/${id}`)
@@ -21,7 +24,7 @@ const HideProfileSwitch = ({id}) => {
   const hide = useSelector(state => state.auth.hideProfile);
   const switchValue = !hide; // Use the negation of hide to get the switch value
 
-  const languageText = hide ? 'Hide Profile' : 'View Profile'; // Modify the languageText logic
+  const languageText = hide ? util.viewProfile : util.hideProfile; // Modify the languageText logic
 
   const toggleHideProfile = () => {
     console.log("Profile",hide)

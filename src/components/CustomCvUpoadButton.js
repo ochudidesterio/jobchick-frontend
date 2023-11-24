@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         height:60,
         flexDirection:"row",
         flex:1,
-        marginVertical:15,
+        marginVertical:5,
 
     },
     txtContainer:{

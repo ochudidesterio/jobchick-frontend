@@ -8,6 +8,7 @@ import HomeStack from './HomeStack';
 import ProfileStack from './ProfileStack';
 import FavouritesScreen from '../screens/FavouritesScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import SettingsStack from './SettingsStack';
 const Tab = createBottomTabNavigator();
 const HomeTabs = () => {
   
@@ -37,7 +38,7 @@ const HomeTabs = () => {
             iconName = 'heart';
           } else if (route.name === 'ProfileStack') {
             iconName = 'person';
-          } else if (route.name === 'Settings') {
+          } else if (route.name === 'SettingsStack') {
             iconName = 'settings-sharp';
           }
           return <Icon name={iconName} size={size} color={color} />;
@@ -79,7 +80,7 @@ const HomeTabs = () => {
         
       />
       <Tab.Screen name="ProfileStack" component={ProfileStack} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen name="SettingsStack" component={SettingsStack} />
     </Tab.Navigator>
   );
 };

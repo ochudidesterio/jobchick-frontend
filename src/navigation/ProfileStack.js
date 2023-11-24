@@ -9,6 +9,8 @@ import { useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import InterestScreen from '../screens/InterestScreen';
+import UploadImages from '../screens/UploadImages';
+
 
 
 
@@ -24,6 +26,7 @@ export default function ProfileStack() {
         })}/>
         <Stack.Screen name='editProfile' component={EditProfileScreen} options={{headerShown:false}}/>
         <Stack.Screen name='interests' component={InterestScreen} options={{headerShown:false}}/>
+        <Stack.Screen name='uploads' component={UploadImages} options={{headerShown:false}}/>
 
     </Stack.Navigator>
   )

@@ -4,13 +4,15 @@ import {
   ScrollView,
   TouchableOpacity,
   Text,
-  RefreshControl
+  RefreshControl,
+  SafeAreaView,
+  Linking
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import React, {useEffect, useState} from 'react';
 import {CommonActions} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
-import {logout} from '../store/slices/authSlice';
+import {logout, setSetting} from '../store/slices/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SwitchButton from '../components/SwitchButton';
 import {useSelector} from 'react-redux';
@@ -21,6 +23,11 @@ import TouchableSettingItem from '../components/TouchableSettingItem';
 import SettingButton from '../components/SettingButton';
 import HideProfileSwitch from '../components/HideProfileSwitch';
 import api from '../api/api';
+import RefreshModal from '../components/RefreshModal';
+import Animated, {StretchInY} from 'react-native-reanimated';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {MultipleSelectList} from 'react-native-dropdown-select-list';
+
 
 const SettingsScreen = ({navigation}) => {
   const language = useSelector(state => state.auth.language);
@@ -29,20 +36,57 @@ const SettingsScreen = ({navigation}) => {
   const dispatch = useDispatch();
 
   const [jobTypes, setJobTypes] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [checkedJobTypes, setCheckedJobTypes] = useState([]);
   const [distance, setDistanceValue] = useState(0);
   const [age, setAgeValue] = useState(0);
-  const [premium,setPremium] = useState([])
+  const [premium, setPremium] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [categoryData, setCategoryData] = useState([]);
+  const [selectedCategoryValues,setSelectedCategoryValues]=useState([])
 
+
+ 
+  const navigateToPrivacyPolicy = () => {
+    navigation.navigate('privacyPolicy');
+  };
+
+  const navigateToTermsOfService = () => {
+    navigation.navigate('termsOfService');
+  };
+
+ 
 
   const handleRefresh = () => {
     setRefreshing(true);
     // Fetch your data here
     getPremium(); // For example, fetching premium data
+    getUserSettings();
+    fetchCategories()
     setRefreshing(false); // After fetching data, turn off refreshing
   };
 
+  const getUserSettings = async () => {
+    try {
+      const response = await api.get(`/setting/get/${user.id}`);
+      if (
+        response.data &&
+        response.data.jobTypes !== null &&
+        response.data.jobTypes.length > 0
+      ) {
+        // Collect the job type IDs and set them to checkedJobTypes
+        const jobTypeIds = response.data.jobTypes.map(jobType => jobType.id);
+        setCheckedJobTypes(jobTypeIds);
+      }
+      setDistanceValue(response.data.distance);
+      setAgeValue(response.data.age);
+      dispatch(setSetting(response.data));
+    } catch (error) {
+      console.log('Error fetching setting', error);
+    }
+  };
 
   useEffect(() => {
     api
@@ -57,6 +101,26 @@ const SettingsScreen = ({navigation}) => {
       .catch(error => console.error('Error fetching job types:', error));
   }, []);
 
+  const fetchCategories = async () => {
+    try {
+      const response = await api.get('/category/get/all');
+
+      if (response.status === 200) {
+        setCategories(response.data);
+        let categoriesArray = response.data.map((cat) => {
+          return {key: cat.id, value: cat.name};
+        });
+        setCategoryData(categoriesArray)
+      }
+    } catch (error) {
+      console.log('Error fetching categories', error);
+    }
+  };
+  useEffect(() => {
+    getUserSettings();
+    fetchCategories();
+  }, []);
+
   // Function to toggle the job type checkbox state
   const toggleJobType = id => {
     const index = checkedJobTypes.indexOf(id);
@@ -68,10 +132,28 @@ const SettingsScreen = ({navigation}) => {
       setCheckedJobTypes(updatedJobTypes);
     }
   };
-  const handleSave = () => {
-    console.log('Checked Job Types IDs:', checkedJobTypes);
-    console.log('Distance', distance);
-    console.log('Age', age);
+  const handleSave = async () => {
+    setIsLoading(true);
+
+    const settingObject = {
+      userId: user.id,
+      distance: distance,
+      age: age,
+      jobTypeIds: checkedJobTypes,
+      categoryIds: selectedCategoryValues
+    };
+
+    try {
+      console.log("OBJ",settingObject)
+     const response = await api.post('/setting/create', settingObject);
+       if (response.status === 200) {
+         setIsLoading(false);
+        navigation.navigate('Home');
+       }
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
   };
 
   const renderJobTypeItem = jobType => {
@@ -99,116 +181,176 @@ const SettingsScreen = ({navigation}) => {
     );
   };
 
-    const getPremium = async()=>{
-        try {
-           const res = await api.get("/premium/get/all")
-           setPremium(res.data)
-        } catch (error) {
-            
-        }
-    }
-    useEffect(()=>{
-        getPremium()
-    },[])
+  const getPremium = async () => {
+    try {
+      const res = await api.get('/premium/get/all');
+      setPremium(res.data);
+    } catch (error) {}
+  };
+  useEffect(() => {
+    getPremium();
+  }, []);
+
 
 
   return (
-    <ScrollView contentContainerStyle={styles.container}
-    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh}/>} 
-    >
-      <View style={styles.language}>
-        <SwitchButton />
-      </View>
-      <View style={styles.distance}>
-        <Text style={styles.distanceHeader}>Distance Range</Text>
-      </View>
-      <View style={styles.valueView}>
-        <Text style={styles.sliderValue}>{0}</Text>
-        <Text style={styles.sliderValue}>{distance} km</Text>
-      </View>
-      <Slider
-        style={styles.slider}
-        minimumValue={0}
-        maximumValue={100}
-        step={1}
-        value={distance}
-        onValueChange={value => setDistanceValue(value)}
-        minimumTrackTintColor={GlobalStyles.colors.colorPrimaryDark}
-        maximumTrackTintColor={GlobalStyles.colors.green}
-        thumbTintColor={GlobalStyles.colors.colorPrimaryDark}
-      />
-      {user && user.role === 'ADMIN' && (
-        <>
-          <View style={styles.distance}>
-            <Text style={styles.distanceHeader}>Age Range</Text>
+    <SafeAreaView style={styles.safearea}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }>
+        <Animated.View entering={StretchInY.duration(1000)}>
+          <View style={styles.language}>
+            <SwitchButton />
           </View>
-          <View style={styles.valueView}>
-            <Text style={styles.sliderValue}>{0}</Text>
-            <Text style={styles.sliderValue}>{age} years</Text>
-          </View>
-          <Slider
-            style={styles.slider}
-            minimumValue={0}
-            maximumValue={100}
-            step={1}
-            value={age}
-            onValueChange={value => setAgeValue(value)}
-            minimumTrackTintColor={GlobalStyles.colors.colorPrimaryDark}
-            maximumTrackTintColor={GlobalStyles.colors.green}
-            thumbTintColor={GlobalStyles.colors.colorPrimaryDark}
+          {user && user.role === 'USER' && (
+            <>
+              <View style={styles.distance}>
+                <Text style={styles.distanceHeader}>{util.distanceRange}</Text>
+              </View>
+              <View style={styles.valueView}>
+                <Text style={styles.sliderValue}>{0}</Text>
+                <Text style={styles.sliderValue}>{distance} km</Text>
+              </View>
+              <Slider
+                style={styles.slider}
+                minimumValue={0}
+                maximumValue={100}
+                step={1}
+                value={distance}
+                onValueChange={value => setDistanceValue(value)}
+                minimumTrackTintColor={GlobalStyles.colors.colorPrimaryDark}
+                maximumTrackTintColor={GlobalStyles.colors.green}
+                thumbTintColor={GlobalStyles.colors.colorPrimaryDark}
+              />
+            </>
+          )}
+          {user && user.role === 'ADMIN' && (
+            <>
+              <View style={styles.distance}>
+                <Text style={styles.distanceHeader}>{util.ageRange}</Text>
+              </View>
+              <View style={styles.valueView}>
+                <Text style={styles.sliderValue}>{0}</Text>
+                <Text style={styles.sliderValue}>{age} {util.yrs}</Text>
+              </View>
+              <Slider
+                style={styles.slider}
+                minimumValue={0}
+                maximumValue={100}
+                step={1}
+                value={age}
+                onValueChange={value => setAgeValue(value)}
+                minimumTrackTintColor={GlobalStyles.colors.colorPrimaryDark}
+                maximumTrackTintColor={GlobalStyles.colors.green}
+                thumbTintColor={GlobalStyles.colors.colorPrimaryDark}
+              />
+            </>
+          )}
+
+          {user && user.role === 'USER' && (
+            <>
+              
+             {categoryData.length > 0 &&  <View style={styles.categoryView}>
+             <Text style={styles.category}>{util.jobCategories}</Text>
+
+              <MultipleSelectList
+            label={util.selectedCategories}
+            labelStyles={{color: GlobalStyles.colors.txtColor}}
+            setSelected={val => setSelectedCategoryValues(val)}
+            placeholder={<Text style={styles.txt}>{util.selectCategories}</Text>}
+            
+           data={categoryData}
+           
+            dropdownTextStyles={{color: GlobalStyles.colors.txtColor}}
+            boxStyles={{
+              borderColor: GlobalStyles.colors.border,
+              borderWidth: 0.5,
+            }}
+            arrowicon={
+              <Icon
+                name="chevron-down"
+                color={GlobalStyles.colors.txtColor}
+                size={20}
+              />
+            }
+            maxHeight={250}
+             save="key"
+            fontFamily="Medium"
+            inputStyles={{color: GlobalStyles.colors.green}}
+            badgeStyles={{
+              backgroundColor: GlobalStyles.colors.colorPrimaryDark,
+            }}
+            notFoundText="category not found"
           />
-        </>
-      )}
-      {user && user.role === 'USER' && (
-        <View style={styles.jobTypes}>
-          {jobTypes.map(jobType => renderJobTypeItem(jobType))}
-        </View>
-      )}
-      <View style={styles.save}>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>SAVE</Text>
-        </TouchableOpacity>
-      </View>
-      <PremiumView premium={premium}
-        color={
-          user.role === 'USER'
-            ? GlobalStyles.colors.premium
-            : GlobalStyles.colors.adminPrem
-        }
-      />
-      {user && user.role === 'USER' && (
-        <>
-          <View style={styles.showProfile}>
-            <HideProfileSwitch id={user.id} />
+              </View>}
+              <View style={styles.jobTypes}>
+                <Text style={styles.distanceHeader}>{util.jobTypes}</Text>
+                <View style={styles.typesContainer}>
+                  {jobTypes.map(jobType => renderJobTypeItem(jobType))}
+                </View>
+              </View>
+            </>
+          )}
+          <View style={styles.save}>
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+              <Text style={styles.saveButtonText}>{util.updateProfile}</Text>
+            </TouchableOpacity>
           </View>
+          <PremiumView
+            premium={premium}
+            color={
+              user.role === 'USER'
+                ? GlobalStyles.colors.premium
+                : GlobalStyles.colors.adminPrem
+            }
+          />
+          {user && user.role === 'USER' && (
+            <>
+              <View style={styles.showProfile}>
+                <HideProfileSwitch id={user.id} />
+              </View>
+              <View style={styles.line} />
+            </>
+          )}
+
+          <TouchableSettingItem onPress={navigateToTermsOfService} text={util.termsOfService} />
           <View style={styles.line} />
-        </>
-      )}
 
-      <TouchableSettingItem text="TERMS OF SERVICE" />
-      <View style={styles.line} />
+          <TouchableSettingItem onPress={navigateToPrivacyPolicy} text={util.privacyPolicy} />
+          <View style={styles.line} />
+          <View style={styles.actions}>
+            <SettingButton
+              txt={util.deletAccount}
+              color={GlobalStyles.colors.red}
+            />
 
-      <TouchableSettingItem text="PRIVACY POLICY" />
-      <View style={styles.line} />
-      <View style={styles.actions}>
-        <SettingButton txt="DELETE ACCOUNT" color={GlobalStyles.colors.red} />
+            <SettingButton
+              txt={util.logout}
+              onPress={handleLogout}
+              color={GlobalStyles.colors.txtColor}
+            />
+          </View>
 
-        <SettingButton
-          txt={util.logout}
-          onPress={handleLogout}
-          color={GlobalStyles.colors.txtColor}
-        />
-      </View>
-    </ScrollView>
+          {isLoading && <RefreshModal isRefreshing={isLoading} />}
+         
+        </Animated.View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default SettingsScreen;
 
 const styles = StyleSheet.create({
+  safearea: {
+    backgroundColor: GlobalStyles.colors.white,
+  },
   container: {
     flexGrow: 1,
     paddingBottom: 20,
+    backgroundColor: GlobalStyles.colors.white,
   },
   language: {
     marginHorizontal: 20,
@@ -232,7 +374,9 @@ const styles = StyleSheet.create({
   jobTypes: {
     marginHorizontal: 20,
     marginBottom: 10,
-    marginTop: 20,
+  },
+  typesContainer: {
+    marginTop: 10,
   },
   jobTypeItem: {
     flexDirection: 'row',
@@ -245,14 +389,28 @@ const styles = StyleSheet.create({
   },
   distanceHeader: {
     color: GlobalStyles.colors.txtColor,
-    fontFamily: 'Bold',
+    fontFamily: 'SemiBold',
     fontSize: 16,
-    textAlign:"left"
-
+    textAlign: 'left',
+  },
+  category: {
+    color: GlobalStyles.colors.txtColor,
+    fontFamily: 'SemiBold',
+    fontSize: 16,
+    textAlign: 'left',
+    marginBottom:10,
   },
   distance: {
     marginHorizontal: 20,
     marginVertical: 2,
+  },
+  categoryView: {
+    marginHorizontal: 20,
+    marginVertical: 20,
+  },
+  txt: {
+    color: GlobalStyles.colors.txtColor,
+    textAlign: 'left',
   },
   checkbox: {
     width: 20,
@@ -271,7 +429,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingHorizontal: 30,
     marginBottom: 20,
-    width: 100,
   },
   saveButtonText: {
     color: GlobalStyles.colors.white,
@@ -282,7 +439,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-end',
     marginHorizontal: 20,
-    marginTop:10
+    marginTop: 10,
   },
 
   slider: {
@@ -299,5 +456,45 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginHorizontal: 20,
+  },
+  dropdownContainer: {
+    marginHorizontal: 20,
+    marginBottom: 10,
+  },
+  dropdownTrigger: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  dropdownItem: {
+    borderWidth: 0.5,
+    borderColor: GlobalStyles.colors.border,
+    backgroundColor: GlobalStyles.colors.white,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    marginTop: 2,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end', // This positions the modal at the bottom
+    // backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 16,
+    maxHeight: '50%', // Adjust this value as needed
   },
 });

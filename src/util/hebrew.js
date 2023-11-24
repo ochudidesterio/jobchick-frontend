@@ -38,10 +38,33 @@ export default {
     lastName:"שם משפחה",
     gender:"מגדר",
     age:"גיל",
-    updateProfile:"עריכת פרופיל",
+    updateProfile:"שמירה",
+    education:"השכלה",
+    languages:"שפות",
+    skills:"מיומנויות",
+    myGallery:"הגלריה שלי",
+    bio:"ביבליוגרפיה",
+    cv:'קו"ח',
+    from:"מ",
+    uploaded:"הועלה",
+    attachCv:"צרף קורות חיים",
+    myUploads:"ההעלאות שלי",
+    saveYourImages:"שמור את התמונות שלך",
+    selectAnImage:"בחר תמונה",
+    uploading:"בהעלאה",
 
     //settings
     logout:"יציאה",
+    viewProfile:"צפה בפרופיל",
+    hideProfile:"הסתר פרופיל",
+    termsOfService:"תנאי השירות",
+    privacyPolicy:"PRIVACY POLICY",
+    getPremium:"משתמש פרימיום",
+    perMonth:"לחודש",
+    deletAccount:"מחק חשבון",
+    jobTypes:"סוגי עבודות",
+    jobCategories:"קטגוריות עבודה",
+
     //jobCard
     description:"תיאור",
     posted:"פורסם",
@@ -52,5 +75,37 @@ export default {
     perYear:"\ שנה",
     jobDesc:"תיאור המשרה",
     proceedToapplication:"המשך ליישום",
+
+     //chat
+     chatWith:"צ'אט עם",
+     typeYourMsg:"רשום את ההודעה שלך",
+     startChat:"התחל צ'אט",
+
+      //alerts
+    locationPermission:"נדרשת הרשאת מיקום",
+    enableGPS:"בבקשה אשר את הפעלת ה-GPS לצורך שימוש באפליקציה",
+    cancel:"ביטול",
+    turnOnGPS:"הפעיל GPS",
+
+
+    //other
+    resume:"קורות חיים",
+    select:"בחר",
+    addYourSkill:"הוסף את המומחיות שלך",
+    selectCategories:"בחר קטגוריות",
+    selectedCategories:"קטגוריות נבחרות",
+    options:"אפשרויות",
+    distanceRange:"טווח מרחק",
+    congratulations:"מזל טוב !",
+    itsAmatch:"יש התאמה !",
+    noJobsAvailable:"אין משרות פנויות",
+    ageRange:"טווח גילאים",
+    yrs:"שנים",
+    region:"איזור",
+    selectEducation:"בחר השכלה מתאימה",
+    maxSelection:"הגעת למבחר המקסימלי ! אנא העלה או רענן כדי לעדכן",
+    delImage:"מחק תמונה",
+    delImageConfirmation:"האם אתה בטוח שברצונך למחוק את התמונה הזו?",
+    del:"מחק תמונה",
   };
   

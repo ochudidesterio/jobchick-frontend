@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderColor: GlobalStyles.colors.accent500,
-    borderWidth: 1,
+    borderColor: GlobalStyles.colors.border,
+    borderWidth: .5,
     borderRadius: 5,
     paddingHorizontal:7,
     color: GlobalStyles.colors.hint,

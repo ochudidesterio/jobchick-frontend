@@ -13,6 +13,7 @@ import AuthStack from './src/navigation/AuthStack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import HomeTabs from './src/navigation/HomeTabs';
+import { SafeAreaView } from 'react-native';
 
 
 
@@ -35,7 +36,7 @@ function App() {
   console.log(user);
   console.log("Token",AsyncStorage.getItem('token'))
   return (
-    <NavigationContainer>
+<NavigationContainer>
       <Stack.Navigator
         initialRouteName="SplashScreen"
         screenOptions={{headerShown: false} }>
@@ -51,6 +52,7 @@ function App() {
         )}
       </Stack.Navigator>
     </NavigationContainer>
+    
   );
 }
 
@@ -60,7 +62,8 @@ export default function Main() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <App />
+          <App />
+        
       </PersistGate>
     </Provider>
   );

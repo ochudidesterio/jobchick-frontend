@@ -15,6 +15,8 @@ const authSlice = createSlice({
     interests:[],
     matchingIds:[],
     company:{},
+    setting:{},
+    jobs:[],
   },
   reducers: {
     loginStart(state) {
@@ -75,6 +77,12 @@ const authSlice = createSlice({
     },
     setCompany(state,{payload}){
       state.company = payload
+    },
+    setSetting(state,{payload}){
+      state.setting = payload
+    },
+    setLoadedJobs(state,{payload}){
+      state.jobs = payload
     }
   },
 });
@@ -94,6 +102,8 @@ export const {
   setHideProfile,
   setCompany,
   setMatchingIds,
+  setSetting,
+  setLoadedJobs
 } = authSlice.actions;
 
 export default authSlice.reducer;

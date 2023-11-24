@@ -32,6 +32,9 @@ const ProfileScreen = ({navigation}) => {
   const handleAddInterest = () => {
     navigation.navigate('interests');
   };
+  const handleUploads =()=>{
+    navigation.navigate('uploads',{user:user})
+  }
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -92,6 +95,7 @@ const ProfileScreen = ({navigation}) => {
             }
             onPress={handleEditPress}
             user={user}
+            viewGallery={handleUploads}
           />
         </View>
       </View>
@@ -155,7 +159,7 @@ const ProfileScreen = ({navigation}) => {
               color={GlobalStyles.colors.white}
             />
           </View>
-          <Text style={styles.text}>Education</Text>
+          <Text style={styles.text}>{util.education}</Text>
         </View>
         <View style={styles.telephone}>
           <Text style={styles.txtItem}>{user.education}</Text>
@@ -186,7 +190,7 @@ const ProfileScreen = ({navigation}) => {
               color={GlobalStyles.colors.white}
             />
           </View>
-          <Text style={styles.text}>Languages</Text>
+          <Text style={styles.text}>{util.languages}</Text>
         </View>
         <View style={styles.telephone}>
           <UserSkills skills={user.languages} />
@@ -201,7 +205,7 @@ const ProfileScreen = ({navigation}) => {
               color={GlobalStyles.colors.white}
             />
           </View>
-          <Text style={styles.text}>Skills</Text>
+          <Text style={styles.text}>{util.skills}</Text>
         </View>
         <View style={styles.telephone}>
           <UserSkills skills={user.skills} />
@@ -219,6 +223,9 @@ const ProfileScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <UserInterests interests={interests} />
+        
+
+
       </View>
     </ScrollView>
   );
@@ -277,7 +284,7 @@ const styles = StyleSheet.create({
   line: {
     height: 1,
     marginVertical: 8,
-    backgroundColor: GlobalStyles.colors.edit,
+    backgroundColor: "#ececec",
   },
   teleContainer: {
     flexDirection: 'row',
@@ -291,6 +298,15 @@ const styles = StyleSheet.create({
   interest: {
     marginLeft: 20,
     marginRight: 20,
+    marginTop: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  gallery: {
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom:20,
     marginTop: 15,
     flexDirection: 'row',
     alignItems: 'center',

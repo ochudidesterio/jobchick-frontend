@@ -38,10 +38,32 @@ export default {
     lastName:"Last name",
     gender:"Gender",
     age:"Age",
-    updateProfile:"Update Profile",
+    updateProfile:"Save",
+    education:"Education",
+    languages:"Languages",
+    skills:"Skills",
+    myGallery:"My Gallery",
+    bio:"Bio",
+    cv:"Cv",
+    from:"From",
+    uploaded:"Uploaded",
+    attachCv:"Attach Cv",
+    myUploads:"My Uploads",
+    saveYourImages:"Save Your Images",
+    selectAnImage:"Select an image",
+    uploading:"Uploading",
 
     //settings
     logout:"Logout",
+    viewProfile:"View Profile",
+    hideProfile:"Hide Profile",
+    termsOfService:"TERMS OF SERVICE",
+    privacyPolicy:"PRIVACY POLICY",
+    getPremium:"GET A PREMIUM",
+    perMonth:"per Month",
+    deletAccount:"DELETE ACCOUNT",
+    jobTypes:"Job Types",
+    jobCategories:"Job Categories",
     //jobCard
     description:"Description",
     posted:"Posted",
@@ -52,5 +74,38 @@ export default {
     perYear:"/ Year",
     jobDesc:"Job Description",
     proceedToapplication:"Proceed to Application",
+
+    //chat
+    chatWith:"Chat with",
+    typeYourMsg:"Type your message",
+    startChat:"Start Chat",
+
+    //alerts
+    locationPermission:"Location Permission Required",
+    enableGPS:"Please enable GPS to use this app Efficiently",
+    cancel:"Cancel",
+    turnOnGPS:"Turn On GPS",
+
+    //other
+    resume:"Resume",
+    select:"Select",
+    addYourSkill:"add your skill",
+    selectCategories:"Select Categories",
+    selectedCategories:"Selected Categories",
+    options:"Options",
+    distanceRange:"Distance Range",
+    congratulations:"Congratulations!",
+    itsAmatch:"It's a match!",
+    noJobsAvailable:"No Jobs Available",
+    ageRange:"Age Range",
+    yrs:"years",
+    region:"Region",
+    selectEducation:"Select Education",
+    maxSelection:"You have reached maximum selection! Please upload or refresh to update",
+    delImage:"Delete Image",
+    delImageConfirmation:"Are you sure you want to delete this image?",
+    del:"Delete",
+
+
   };
   

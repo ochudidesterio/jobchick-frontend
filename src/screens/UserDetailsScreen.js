@@ -1,38 +1,34 @@
 import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {GlobalStyles} from '../colors';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import DetailScreenActions from '../components/DetailScreenActions';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import api from '../api/api';
+import getLanguageObject from '../util/LanguageUtil';
 
 const UserDetailsScreen = ({route}) => {
-    const navigation = useNavigation()
-    const company = useSelector(state=>state.auth.company)
-    const matchingIds = useSelector(state=>state.auth.matchingIds)
+  const navigation = useNavigation();
+  const company = useSelector(state => state.auth.company);
+  const matchingIds = useSelector(state => state.auth.matchingIds);
+  const language = useSelector(state => state.auth.language);
+  const util = getLanguageObject(language);
   const {userParam} = route.params;
-  let user = userParam
+  let user = userParam;
 
-  const back = async ()=>{
-    navigation.navigate('Home')
-  }
-  const viewLikedJobs = async ()=>{
+  const back = async () => {
+    navigation.navigate('Home');
+  };
+  const viewLikedJobs = async () => {
     try {
-    
-      navigation.navigate("likedJobs",{userParam})
-    } catch (error) {
-      
-    }
-  }
-  const adminLikeUser =async()=>{
-try {
-  await api.post(
-    `/companylikes/create/${company.id}/${user.id}`
-  );
-} catch (error) {
-  
-}
-  }
+      navigation.navigate('likedJobs', {userParam});
+    } catch (error) {}
+  };
+  const adminLikeUser = async () => {
+    try {
+      await api.post(`/companylikes/create/${company.id}/${user.id}`);
+    } catch (error) {}
+  };
   let isTrue = false;
   for (const item of matchingIds) {
     if (item.userId === user.id) {
@@ -60,23 +56,23 @@ try {
             : user.authUsername}
         </Text>
         <View style={styles.item}>
-          <Text style={styles.title}>Biography</Text>
+          <Text style={styles.title}>{util.bio}</Text>
           <Text style={styles.txtBio}>{user.bio}</Text>
         </View>
         <View style={styles.item}>
-          <Text style={styles.title}>Gender</Text>
+          <Text style={styles.title}>{util.gender}</Text>
           <Text style={styles.txtBio}>{user.gender}</Text>
         </View>
         <View style={styles.item}>
-          <Text style={styles.title}>Proffesion</Text>
+          <Text style={styles.title}>{util.proffesion}</Text>
           <Text style={styles.txtBio}>{user.proffession}</Text>
         </View>
         <View style={styles.item}>
-          <Text style={styles.title}>Education</Text>
+          <Text style={styles.title}>{util.education}</Text>
           <Text style={styles.txtBio}>{user.education}</Text>
         </View>
         <View style={styles.item}>
-          <Text style={styles.title}>Skills</Text>
+          <Text style={styles.title}>{util.skills}</Text>
           {user.skills && user.skills.length > 0 ? (
             <Text style={styles.txtBio}>{user.skills.join(' | ')}</Text>
           ) : (
@@ -84,7 +80,7 @@ try {
           )}
         </View>
         <View style={styles.item}>
-          <Text style={styles.title}>Languages</Text>
+          <Text style={styles.title}>{util.languages}</Text>
           {user.languages && user.languages.length > 0 ? (
             <Text style={styles.txtBio}>{user.languages.join(' | ')}</Text>
           ) : (
@@ -92,19 +88,24 @@ try {
           )}
         </View>
         <View style={styles.item}>
-          <Text style={styles.title}>Region</Text>
+          <Text style={styles.title}>{util.region}</Text>
           <Text style={styles.txtBio}>{user.location}</Text>
         </View>
         <View style={styles.item}>
-          <Text style={styles.title}>Email</Text>
+          <Text style={styles.title}>{util.email}</Text>
           <Text style={styles.txtBio}>{user.email}</Text>
         </View>
         <View style={styles.item}>
-          <Text style={styles.title}>Phone number</Text>
+          <Text style={styles.title}>{util.phonenumber}</Text>
           <Text style={styles.txtBio}>{user.phoneNumber}</Text>
         </View>
         <View style={styles.other}>
-            <DetailScreenActions jobs={viewLikedJobs} like={adminLikeUser} isTrue={isTrue} nope={back} />
+          <DetailScreenActions
+            jobs={viewLikedJobs}
+            like={adminLikeUser}
+            isTrue={isTrue}
+            nope={back}
+          />
         </View>
       </View>
     </ScrollView>
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colors.txtColor,
     marginVertical: 2,
     fontFamily: 'Light',
-    textAlign:"left"
+    textAlign: 'left',
   },
   username: {
     color: GlobalStyles.colors.txtColor,
