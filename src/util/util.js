@@ -102,3 +102,4 @@ export  const areArraysEqual =(arr1, arr2)=>{
     },
   ];
 
+  export const PRIVACY_POLICY = 'https://www.termsfeed.com/live/c22e0755-3001-46f2-9cac-2dc76ae16edb'

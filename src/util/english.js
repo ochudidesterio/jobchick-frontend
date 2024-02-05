@@ -105,6 +105,10 @@ export default {
     delImage:"Delete Image",
     delImageConfirmation:"Are you sure you want to delete this image?",
     del:"Delete",
+    elementaryEducation:"Elementary Education",
+    secondaryEducation:"Secondary Education",
+    bachelorsDegree:"Bachelor's Degree",
+    mastersDegree:"Masters Degree",
 
 
   };

@@ -2,9 +2,10 @@ import {StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {WebView} from 'react-native-webview';
 import RefreshModal from '../components/RefreshModal';
+import { PRIVACY_POLICY } from '../util/util';
 
 const TermsOfServiceWebview = () => {
-  const termsURL = 'https://sams-sales.com/index.php/privacy-policy';
+  const termsURL = PRIVACY_POLICY;
   const [isLoading, setIsLoading] = useState(true);
 
   return (

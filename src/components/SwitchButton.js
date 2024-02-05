@@ -10,7 +10,7 @@ const SwitchButton = () => {
   const dispatch = useDispatch();
   const language = useSelector(state => state.auth.language);
   const switchValue = language === 'he';
-  const languageText = language === 'he' ? 'Hebrew' : 'English';
+  const languageText = language === 'he' ? 'עברית' : 'English';
   const toggleLanguage = () => {
     const newLanguage = language === 'en' ? 'he' : 'en';
     dispatch(setLanguage(newLanguage));

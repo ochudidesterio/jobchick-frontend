@@ -32,7 +32,7 @@ const JobCard = ({data}) => {
       </View>
       
         <JobDetailCard
-          level={data.level}
+          level={data.type}
           salary={data.salary}
           location={data.region}
           timePosted={calculateTimeElapsed(

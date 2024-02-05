@@ -112,7 +112,7 @@ const DetailsScreen = ({route}) => {
           <Text style={styles.type}>
             {data.level} | {data.type} | {data.region}
           </Text>
-          <Text style={styles.salary}>{data.salary} {util.perYear}</Text>
+          <Text style={styles.salary}>{data.salary}₪</Text>
         </View>
 
         <View style={styles.jdContainer}>
