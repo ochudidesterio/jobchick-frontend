@@ -58,7 +58,7 @@ export default {
     viewProfile:"צפה בפרופיל",
     hideProfile:"הסתר פרופיל",
     termsOfService:"תנאי השירות",
-    privacyPolicy:"PRIVACY POLICY",
+    privacyPolicy:"מדיניות פרטיות",
     getPremium:"משתמש פרימיום",
     perMonth:"לחודש",
     deletAccount:"מחק חשבון",
@@ -107,5 +107,9 @@ export default {
     delImage:"מחק תמונה",
     delImageConfirmation:"האם אתה בטוח שברצונך למחוק את התמונה הזו?",
     del:"מחק תמונה",
+    elementaryEducation:"ללא תעודת בגרות",
+    secondaryEducation:"תעודת בגרות מלאה",
+    bachelorsDegree:"תואר ראשון",
+    mastersDegree:"תואר שני",
   };
   

@@ -4,18 +4,20 @@ import { GlobalStyles } from '../colors'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import getLanguageObject from '../util/LanguageUtil';
+import api from '../api/api';
+import { useNavigation } from '@react-navigation/native';
 
 
-const PremiumView = ({color,premium}) => {
+const PremiumView = ({color,premium,onPress}) => {
     const language = useSelector(state => state.auth.language);
     const util = getLanguageObject(language);
+    const navigation = useNavigation()
 
-
-
+   
     
   return (
     <View style={[styles.container,{backgroundColor:color}]}>
-      <TouchableOpacity style={styles.innerContainer}>
+      <TouchableOpacity onPress={onPress} style={styles.innerContainer}>
         <View style={styles.premiumLeft}>
             <View style ={styles.starContainer}>
             <Icon name="star" size={20} color={GlobalStyles.colors.gold} />

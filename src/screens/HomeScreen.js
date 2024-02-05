@@ -462,7 +462,7 @@ const HomeScreen = ({navigation}) => {
         likeJobData.userId = user.id;
         likeJobData.companyId = currentJob.company.id;
         if (currentIndex < jobs.length) {
-          translateX.value = withSpring(-hiddenTranslate);
+          translateX.value = withSpring(hiddenTranslate);
           // runOnJS(onSwipeLeft)();
           runOnJS(setCurrentIndex)(currentIndex + 1);
         }
@@ -474,7 +474,7 @@ const HomeScreen = ({navigation}) => {
       }
     } else {
       if (currentUserIndex < users.length) {
-        translateX.value = withSpring(-hiddenTranslate);
+        translateX.value = withSpring(hiddenTranslate);
         // runOnJS(onSwipeLeft)();
         runOnJS(setCurrentUserIndex)(currentUserIndex + 1);
       }
@@ -539,6 +539,8 @@ const HomeScreen = ({navigation}) => {
       fetchLikeIds();
     }
   }, []);
+  
+ 
 
   return (
     <View style={styles.outerView}>
@@ -548,10 +550,12 @@ const HomeScreen = ({navigation}) => {
             {jobs.length > 0 ? (
               <View style={styles.stackContainer}>
                 {nextJob && (
+                  
                   <View style={styles.nextCard}>
+
                     <Animated.View style={[styles.animatedCard, nextCardStyle]}>
                       {isDataLoaded && <JobCard data={nextJob} />}
-                    </Animated.View>
+                    </Animated.View> 
                   </View>
                 )}
                 {currentJob && (
@@ -591,7 +595,7 @@ const HomeScreen = ({navigation}) => {
                 {nextUser && (
                   <View style={styles.nextCard}>
                     <Animated.View style={[styles.animatedCard, nextCardStyle]}>
-                      {isDataLoaded && <UserCard user={nextUser} />}
+                      {isDataLoaded && <UserCard user={nextUser}  />}
                     </Animated.View>
                   </View>
                 )}

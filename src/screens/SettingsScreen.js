@@ -56,6 +56,19 @@ const SettingsScreen = ({navigation}) => {
   const navigateToTermsOfService = () => {
     navigation.navigate('termsOfService');
   };
+  const initPayment =async()=>{
+    console.log("Init Payment",premium[0].price)
+    try{
+      const response = await api.post(`/paypal/init?sum=${premium[0].price}`)
+      console.log("Payment",response.data)
+      if(response.data.status === "success"){
+        let data = response.data
+          navigation.navigate("payment",{data:data,userId:user.id,amount:premium[0].price})
+      }
+      }catch(error){
+      
+      }
+  }
 
  
 
@@ -300,6 +313,7 @@ const SettingsScreen = ({navigation}) => {
           </View>
           <PremiumView
             premium={premium}
+            onPress={initPayment}
             color={
               user.role === 'USER'
                 ? GlobalStyles.colors.premium

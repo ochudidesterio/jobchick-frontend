@@ -1,6 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
+import FontI from 'react-native-vector-icons/FontAwesome'
 import {GlobalStyles} from '../colors';
 import {useSelector} from 'react-redux';
 import getLanguageObject from '../util/LanguageUtil';
@@ -19,7 +20,7 @@ const JobDetailCard = ({location, timePosted, salary, level, company}) => {
         </View>
       </View>
       <View style={styles.item}>
-        <Icon name="logo-usd" size={15} color={GlobalStyles.colors.red} />
+        <FontI name="shekel" size={15} color={GlobalStyles.colors.red} />
         <Text style={styles.txt}>{salary}</Text>
       </View>
       <View style={styles.item}>

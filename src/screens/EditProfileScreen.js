@@ -29,7 +29,6 @@ import CustomCvUpoadButton from '../components/CustomCvUpoadButton';
 import DropDownModal from '../components/DropDownModal';
 import {MultipleSelectList} from 'react-native-dropdown-select-list';
 import {LANGUAGES} from '../util/util';
-import {LEVELS} from '../util/util';
 
 const EditProfileScreen = ({navigation}) => {
   const user = useSelector(state => state.auth.user);
@@ -59,6 +58,21 @@ const EditProfileScreen = ({navigation}) => {
 
   const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
   const [isEducationModalVisible, setIsEducationModalVisible] = useState(false);
+  const LEVELS =[
+    {
+      id: 1,
+      name: util.elementaryEducation,
+    },
+    {id: 2, name: util.secondaryEducation},
+    {
+      id: 3,
+      name: util.bachelorsDegree,
+    },
+    {
+      id: 4,
+      name: util.mastersDegree ,
+    },
+  ]
 
   const [skill, setSkills] = useState('');
   const [badges, setBadges] = useState(user.skills);
