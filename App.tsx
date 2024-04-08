@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import SplashScreen from '../../jobfinder/jobfinder/src/screens/SplashScreen';
+import SplashScreen from '../jobchick-app/src/screens/SplashScreen';
 
 import {Provider, useDispatch, useSelector} from 'react-redux';
 import {store, persistor} from './src/store/store.js';

@@ -103,3 +103,4 @@ export  const areArraysEqual =(arr1, arr2)=>{
   ];
 
   export const PRIVACY_POLICY = 'https://www.termsfeed.com/live/c22e0755-3001-46f2-9cac-2dc76ae16edb'
+  export const TERMS_OF_SERVICE = "https://app.box.com/s/ck4znhovd6tj34ydsg2j1fvv97edd5qd"

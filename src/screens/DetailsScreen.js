@@ -1,4 +1,4 @@
-import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Image, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {GlobalStyles} from '../colors';
 import calculateTimeElapsed from '../util/timeUtils';
@@ -6,6 +6,7 @@ import api from '../api/api';
 import JobRolesList from '../components/JobRolesList';
 import QualificationList from '../components/QualificationList';
 import DetailScreenActions from '../components/DetailScreenActions';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useSelector,useDispatch} from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import getLanguageObject from '../util/LanguageUtil';
@@ -88,13 +89,27 @@ const DetailsScreen = ({route}) => {
      console.log('Error', error);
    }
  };
+
+ const chat = () => {
+  let id;
+  let name;
+    id = data.company.adminId;
+    name = data.company.name;
+  
+    if(id !== null){
+      navigation.navigate('chats', {user: user, id: id, name: name});
+    }else{
+      ToastAndroid.show("Company admin not available",ToastAndroid.SHORT)
+    }
+  
+};
   const back = async ()=>{
     navigation.navigate('Home')
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.jobContainer}>
+    <View style={styles.container}>
+      <ScrollView style={styles.jobContainer}>
         <View style={styles.header}>
           <View style={styles.avatar}>
             <Image
@@ -125,11 +140,15 @@ const DetailsScreen = ({route}) => {
         <Text style={styles.description}>{data.description}</Text>
         <JobRolesList roles={roles} />
         <QualificationList qualifications={qualifications} />
-        <View style={styles.applyContainer}>
+        {/* <View style={styles.applyContainer}>
           <DetailScreenActions  like={like} nope={back} jobs={viewLikedJobs}  />
-        </View>
-      </View>
-    </ScrollView>
+        </View> */}
+        
+      </ScrollView>
+      <TouchableOpacity onPress={chat} style={styles.fabContainer}>
+          <Icon name="chatbubble-ellipses"  color={GlobalStyles.colors.white} size={45} />
+        </TouchableOpacity>
+    </View>
   );
 };
 
@@ -207,4 +226,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
   },
+  fabContainer: {
+    backgroundColor: GlobalStyles.colors.green,
+    borderRadius: 50,
+    position:"absolute",
+    justifyContent:"center",
+    alignItems:"center",
+    right:15,
+    bottom:30,
+    height:60,
+    width:60,
+    },
 });

@@ -637,10 +637,10 @@ const HomeScreen = ({navigation}) => {
               styles.button,
               {backgroundColor: GlobalStyles.colors.orange},
             ]}>
-            <View style={styles.holder}>
+            <View style={[styles.holder, {width: 45, height: 45}]}>
               <Font
                 name="mail-reply"
-                size={25}
+                size={40}
                 color={GlobalStyles.colors.white}
               />
             </View>
@@ -648,8 +648,8 @@ const HomeScreen = ({navigation}) => {
           <TouchableOpacity
             onPress={nope}
             style={[styles.button, {backgroundColor: GlobalStyles.colors.red}]}>
-            <View style={[styles.holder, {width: 35, height: 35}]}>
-              <Ent name="cross" size={30} color={GlobalStyles.colors.white} />
+            <View style={[styles.holder, {width: 45, height: 45}]}>
+              <Ent name="cross" size={40} color={GlobalStyles.colors.white} />
             </View>
           </TouchableOpacity>
 
@@ -659,24 +659,11 @@ const HomeScreen = ({navigation}) => {
               styles.button,
               {backgroundColor: GlobalStyles.colors.green},
             ]}>
-            <View style={[styles.holder, {width: 35, height: 35}]}>
-              <Icon name="heart" size={30} color={GlobalStyles.colors.white} />
+            <View style={[styles.holder, {width: 45, height: 45}]}>
+              <Icon name="heart" size={40} color={GlobalStyles.colors.white} />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={chat}
-            style={[
-              styles.button,
-              {backgroundColor: GlobalStyles.colors.colorPrimaryLight},
-            ]}>
-            <View style={styles.holder}>
-              <Icon
-                name="chatbubble-ellipses"
-                size={25}
-                color={GlobalStyles.colors.white}
-              />
-            </View>
-          </TouchableOpacity>
+          
         </View>
         {isRefreshing && <RefreshModal isRefreshing={isRefreshing} />}
       </GestureHandlerRootView>
@@ -734,7 +721,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingHorizontal: 16,
-    paddingBottom: 16,
+    marginBottom: 50,
   },
   button: {
     backgroundColor: GlobalStyles.colors.white,
