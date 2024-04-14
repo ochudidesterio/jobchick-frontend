@@ -133,7 +133,7 @@ const SplashScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    dispatch(setLanguage('he'));
+    dispatch(setLanguage('en'));
     if(Platform.OS === "android"){
       requestLocationPermission();
       requestStoragePermission()

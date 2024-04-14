@@ -3,7 +3,6 @@ import {View, StyleSheet} from 'react-native';
 import {GlobalStyles} from '../colors';
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
-import Animated, {SlideInDown} from 'react-native-reanimated';
 import {Image, Text} from 'react-native-animatable';
 import api, {setAuthToken} from '../api/api';
 import {useDispatch} from 'react-redux';
@@ -12,6 +11,7 @@ import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
 import getLanguageObject from '../util/LanguageUtil';
+import {CheckBox} from '@rneui/themed'
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -23,6 +23,9 @@ const LoginScreen = () => {
   const [authError, setAuthError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [emailError, setEmailError] = useState('');
+
+  const [checked, setChecked] = useState(true);
+  const toggleCheckbox = () => setChecked(!checked);
 
   const user = {
     email: '',
@@ -90,8 +93,7 @@ const LoginScreen = () => {
         </View>
         <Text style={styles.text}>{util.login}</Text>
       </View>
-      <Animated.View
-        entering={SlideInDown.duration(1000)}
+      <View
         style={styles.footer}>
           {authError ? (
             <Text style={styles.errorText}>{authError}</Text>
@@ -118,14 +120,31 @@ const LoginScreen = () => {
             <Text style={styles.errorText}>{passwordError}</Text>
           ) : null}
 
+
+        <View style={styles.remMeContainer}>
+        <CheckBox
+           checked={checked}
+           onPress={toggleCheckbox}
+           title="Remember me"
+           iconType="material-community"
+           checkedIcon="checkbox-outline"
+           uncheckedIcon={'checkbox-blank-outline'}
+           checkedColor={GlobalStyles.colors.colorPrimaryDark}
+           uncheckedColor={GlobalStyles.colors.colorPrimaryLight}
+           containerStyle={{padding:0,marginLeft: 0}}
+           textStyle={{color:GlobalStyles.colors.colorPrimaryDark, fontWeight:"bold"}}
+         />
+        <Text onPress={handleForgotPassword} style={styles.forgot}>{util.forgotPassword}</Text>
+
+        </View>
         <CustomButton title={util.login} onPress={handleLogin} />
         <View style={styles.signUpContainer}>
-          <Text onPress={handleForgotPassword} style={styles.forgot}>{util.forgotPassword}</Text>
+          <Text style={styles.accountTxt}>Dont have an account? </Text>
           <Text onPress={handleSignUp} style={styles.forgot}>
             {util.signUp}
           </Text>
         </View>
-      </Animated.View>
+      </View>
     </View>
   );
 };
@@ -165,14 +184,28 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: GlobalStyles.colors.white,
   },
+  accountTxt: {
+    fontWeight: 'bold',
+    color: GlobalStyles.colors.txtColor,
+  },
   forgot: {
-    color: GlobalStyles.colors.forgot,
+    color: GlobalStyles.colors.colorPrimaryDark,
+    fontWeight:"bold"
   },
   signUpContainer: {
-    justifyContent: 'space-between',
+
+    justifyContent: "center",
+    alignItems: 'center',
     flexDirection: 'row',
     paddingHorizontal: 5,
+    marginTop: 25,
+  },
+  remMeContainer: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
     marginTop: 20,
+    alignItems: 'center',
+    paddingRight:5
   },
   errorText: {
     color: 'red',

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView,Linking} from 'react-native';
 import {GlobalStyles} from '../colors';
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
@@ -9,11 +9,19 @@ import {useNavigation} from '@react-navigation/native';
 import api from '../api/api';
 import { useSelector } from 'react-redux';
 import getLanguageObject from '../util/LanguageUtil';
+import {CheckBox} from '@rneui/themed'
+import { PRIVACY_POLICY } from '../util/util';
+import { TouchableOpacity } from 'react-native';
+import DropDownModal from '../components/DropDownModal';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+
 
 const SignUpScreen = () => {
   const language = useSelector(state=>state.auth.language)
   const util = getLanguageObject(language)
   const [email, setEmail] = useState('');
+  const [age,setAge] = useState('')
   const [password, setPassword] = useState('');
   const [confirmpassword, setConfirmPassword] = useState('');
   const [username, setUsername] = useState('');
@@ -22,13 +30,54 @@ const SignUpScreen = () => {
   const [emailError, setEmailError] = useState('');
   const [confirmpasswordError, setConfirmPasswordError] = useState('');
   const [authError, setAuthError] = useState('');
+  const [ageError,setAgeError] = useState('')
+  const [educationError,setEducationError] = useState('')
+  const [policyError, setPolicyError] = useState('')
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isEducationModalVisible, setIsEducationModalVisible] = useState(false);
+  const [checked, setChecked] = useState(false);
+
+
+  const LEVELS =[
+    {
+      id: 1,
+      name: util.elementaryEducation,
+    },
+    {id: 2, name: util.secondaryEducation},
+    {
+      id: 3,
+      name: util.bachelorsDegree,
+    },
+    {
+      id: 4,
+      name: util.mastersDegree ,
+    },
+  ]
+
+  const handleEducationSelect = item => {
+    setSelectedItem(item.name);
+  };
+
+  const toggleEducationModal = () => {
+    setIsEducationModalVisible(!isEducationModalVisible);
+  };
+
+
 
   const navigation = useNavigation();
+
+  const toggleCheckbox = () => setChecked(!checked);
+
+  const navigateToPrivacyPolicy = () => {
+    Linking.openURL(PRIVACY_POLICY)
+  };
 
   const registerData = {
     username: '',
     email: '',
     password: '',
+    age:'',
+    education:'',
   };
 
   const isValidEmail = email => {
@@ -42,6 +91,9 @@ const SignUpScreen = () => {
       setEmailError('');
       setConfirmPasswordError('');
       setAuthError('');
+      setAgeError('')
+      setEducationError('')
+      setPolicyError('')
 
       let isValid = true;
 
@@ -49,9 +101,21 @@ const SignUpScreen = () => {
         setUsernameError(util.usernameError);
         isValid = false;
       }
+      if(age.trim().length === 0){
+        setAgeError(util.ageError)
+        isValid = false;
+      }
+      if(selectedItem === null){
+        setEducationError(util.educationError)
+        isValid = false
+      }
       if (password.trim().length < 6) {
         setPasswordError(util.passlenthError);
         isValid = false;
+      }
+      if(!checked){
+        setPolicyError(util.policyError)
+        isValid = false
       }
       if (!isValidEmail(email)) {
         setEmailError(util.txtEmailError);
@@ -69,6 +133,8 @@ const SignUpScreen = () => {
         registerData.email = email;
         registerData.username = username;
         registerData.password = password;
+        registerData.age = age;
+        registerData.education = selectedItem;
 
         const response = await api.post('/auth/register', registerData);
         if (response.data.message === 'Successful') {
@@ -98,8 +164,7 @@ const SignUpScreen = () => {
         </View>
         <Text style={styles.text}>{util.createyouraccount}</Text>
       </View>
-      <Animated.View
-        entering={SlideInDown.duration(1000)}
+      <View
         style={styles.footer}>
         <ScrollView>
         {authError ? (
@@ -128,6 +193,48 @@ const SignUpScreen = () => {
             <Text style={styles.errorText}>{emailError}</Text>
           ) : null}
 
+        <CustomInput
+            placeholder={util.age}
+            icon="body-sharp"
+            keyboard='number-pad'
+            value={age}
+            onChangeText={setAge}
+            secureTextEntry={false}
+          />
+          {ageError ? (
+            <Text style={styles.errorText}>{ageError}</Text>
+          ) : null}
+
+
+          <TouchableOpacity
+            style={styles.dropdownTrigger}
+            onPress={toggleEducationModal}>
+              <Icon
+              name="school"
+              size={20}
+              color={GlobalStyles.colors.colorPrimaryLight}
+            />
+            <Text style={styles.txt}>
+              {selectedItem !== null ? selectedItem : util.selectEducation}
+            </Text>
+            <Icon
+              name="chevron-down-sharp"
+              size={20}
+              color={GlobalStyles.colors.colorPrimaryLight}
+            />
+          </TouchableOpacity>
+
+          {educationError ? (
+            <Text style={styles.errorText}>{educationError}</Text>
+          ) : null}
+        <DropDownModal
+          data={LEVELS}
+          handleSelect={handleEducationSelect}
+          isModalVisible={isEducationModalVisible}
+          toggleModal={toggleEducationModal}
+          title={util.education}
+        />
+
           <CustomInput
             placeholder={util.password}
             icon="lock-closed"
@@ -150,15 +257,35 @@ const SignUpScreen = () => {
             <Text style={styles.errorText}>{confirmpasswordError}</Text>
           ) : null}
 
+          
+         <View style={styles.policyContainer}>
+         <CheckBox
+           checked={checked}
+           onPress={toggleCheckbox}
+           title="I accept the "
+           iconType="material-community"
+           checkedIcon="checkbox-outline"
+           uncheckedIcon={'checkbox-blank-outline'}
+           checkedColor={GlobalStyles.colors.colorPrimaryDark}
+           uncheckedColor={GlobalStyles.colors.colorPrimaryLight}
+           containerStyle={{padding:0,marginLeft: 0, margin:0}}
+           textStyle={{color:GlobalStyles.colors.colorPrimaryDark,  marginRight:0, fontWeight:"bold"}}
+         />
+          <Text onPress={navigateToPrivacyPolicy} style={styles.forgot}>{util.privacy}</Text>
+
+         </View>
+         {policyError ? (
+            <Text style={styles.errorText}>{policyError}</Text>
+          ) : null}
           <CustomButton title={util.register} onPress={handleRegister} />
           <View style={styles.signUpContainer}>
-            <Text style={styles.forgot}>{util.privacyPolicy}</Text>
+            <Text style={styles.accountTxt}>Already have an account? </Text>
             <Text onPress={handleSignIn} style={styles.forgot}>
               {util.signIn}
             </Text>
           </View>
         </ScrollView>
-      </Animated.View>
+      </View>
     </View>
   );
 };
@@ -203,19 +330,50 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colors.white,
   },
   forgot: {
-    color: GlobalStyles.colors.forgot,
+    color: GlobalStyles.colors.colorPrimaryDark,
+    fontWeight:"bold",
+    textDecorationLine:"underline"
   },
   signUpContainer: {
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     flexDirection: 'row',
+    alignItems: 'center',
+
     paddingHorizontal: 5,
+    marginTop: 25,
+    marginBottom:25,
+  },
+  policyContainer: {
+    flexDirection: 'row',
     marginTop: 20,
+    alignItems: 'center',
+
   },
   errorText: {
     color: 'red',
     marginBottom: 1,
     fontSize: 10,
     fontFamily:"Medium"
+  },
+  accountTxt: {
+    fontWeight: 'bold',
+    color: GlobalStyles.colors.txtColor,
+  },
+  dropdownTrigger: {
+    borderWidth: 0.5,
+    borderColor: '#ccc',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginVertical:10,
+    borderRadius: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+
+  },
+  txt: {
+    color: GlobalStyles.colors.hint,
+    flex:1,
+    marginLeft:10
   },
 });
 
